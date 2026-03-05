@@ -107,3 +107,12 @@ CREATE TABLE IF NOT EXISTS rag_chunks (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_rag_chunks_path ON rag_chunks (path);
+
+CREATE TABLE IF NOT EXISTS fs_allowlist (
+    run_id TEXT NOT NULL,
+    path TEXT NOT NULL,
+    approval_id TEXT NOT NULL,
+    approved_at TEXT NOT NULL,
+    PRIMARY KEY (run_id, path),
+    FOREIGN KEY (run_id) REFERENCES runs (run_id) ON DELETE CASCADE
+);

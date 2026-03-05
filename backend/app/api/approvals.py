@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from app.db import repo_approvals, repo_runs
+from app.db import repo_approvals, repo_runs, repo_fs_allowlist
 from app.core.time import now_iso
 from app.events.bus import event_bus
 from app.orchestrator.graph import resume_run_after_approval
@@ -53,4 +53,10 @@ async def resolve_approval(approval_id: str, decision: dict):
                 repo_runs.update_run_status(run_id, "completed", ended_at=now_iso())
             except ToolError:
                 pass
+    if approval.get("type") in {"filesystem.read", "filesystem.write"} and status == "approved":
+        details = (approval.get("request") or {}).get("details") or {}
+        path = details.get("path")
+        run_id = approval.get("run_id")
+        if path and run_id:
+            repo_fs_allowlist.allow_path(run_id, path, approval_id)
     return {"status": "ok"}

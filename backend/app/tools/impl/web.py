@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict
+import ipaddress
 
 import httpx
 from pydantic import Field
@@ -50,6 +51,14 @@ def _guard_url(url: str) -> None:
     blocked_hosts = {"localhost", "127.0.0.1", "0.0.0.0"}
     if host in blocked_hosts or host.startswith("::1") or host.startswith("169.254."):
         raise PermissionError("Access to local/metadata addresses is blocked")
+    try:
+        ip = ipaddress.ip_address(host)
+        if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
+            raise PermissionError("Access to private addresses is blocked")
+    except ValueError:
+        # non-literal host; allow but still block obvious patterns
+        if host.endswith(".local"):
+            raise PermissionError("Access to local domains is blocked")
 
 
 def _truncate(text: str, limit: int = 4000) -> tuple[str, bool]:
