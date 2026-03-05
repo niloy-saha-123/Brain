@@ -27,7 +27,7 @@
 ## v0.2 Milestones (backlog)
 | Milestone | Branch | Status | Last commit | Verification | Notes |
 |---|---|---|---|---|---|
-| Agents CRUD (backend + UI wiring) | feat/v0.2-agents | Not started |  |  | First priority |
+| Agents CRUD (backend + UI wiring) | feat/v0.2-agents | Done | db91211 | python -m pytest app/tests; UI Agents page can create/update/delete agents via API | Branch work tracked on feat/v0.2-backlog; agent_id auto if blank |
 | Orchestrator planning + multi-tool execution | feat/v0.2-orchestrator | Not started |  |  | Real plan → tool selection → approvals → execution for >=3 tools |
 | Memory/RAG indexing + retrieval + citations | feat/v0.2-rag | Not started |  |  | Approved folder indexing, LanceDB, citations |
 | Security hardening (paths/SSRF/redaction/artifacts) | feat/v0.2-security | Not started |  |  | Filesystem allowlists per approval; SSRF guard; output truncation/artifacts |
