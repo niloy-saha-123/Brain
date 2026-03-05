@@ -1,0 +1,145 @@
+{
+  "$defs": {
+    "MemoryPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "can_write_facts": {
+          "default": true,
+          "title": "Can Write Facts",
+          "type": "boolean"
+        },
+        "fact_tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fact Tags",
+          "type": "array"
+        },
+        "default_ttl_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Ttl Days"
+        }
+      },
+      "title": "MemoryPolicy",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "v": {
+      "default": 1,
+      "title": "V",
+      "type": "integer"
+    },
+    "agent_id": {
+      "title": "Agent Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "system_prompt": {
+      "title": "System Prompt",
+      "type": "string"
+    },
+    "tools_allow": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tools Allow",
+      "type": "array"
+    },
+    "tools_deny": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tools Deny",
+      "type": "array"
+    },
+    "risk_level": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Risk Level"
+    },
+    "model_pref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Pref"
+    },
+    "memory_policy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MemoryPolicy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    },
+    "version": {
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "agent_id",
+    "name",
+    "description",
+    "system_prompt"
+  ],
+  "title": "AgentSpec",
+  "type": "object"
+}

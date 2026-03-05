@@ -57,3 +57,25 @@ See `SETUP.md`.
 
 ## Verified steps
 - Verified step 0: repo initialized with specs + workflow files.
+- Verified step 1: backend skeleton with health endpoints and CORS is in place.
+- Verified step 2: SQLite schema, migrations, and DB repos are implemented.
+- Verified step 3: Pydantic schemas added with JSON schema export utility.
+- Verified step 4: Ollama client with streaming and /debug/llm endpoint is available.
+- Verified step 5: SSE event bus with /runs/{run_id}/events streaming endpoint is available.
+- Verified step 6: Tool system skeleton with approvals/receipts endpoints is available.
+- Verified step 7: Approval gating publishes requests/resolutions and is wired to events/runner.
+- Verified step 8: Orchestrator stubs (route→rewrite→context→plan→execute→verify→finalize) and run state are in place.
+- Verified step 9: Memory/RAG placeholders added (facts store + RAG stubs).
+- Verified step 10: UI scaffold (Vite/React) with stub panels is set up.
+- Verified step 11: UI panels wired with monochrome boxy layout, routing, and status pills.
+- Verified step 12: Cost meter hooks with budget summary endpoint and UI panel wiring.
+- Verified step 13: Tests cover approvals/receipts/health/runs; anyio backend pinned to asyncio for local pytest.
+
+## UI spec (monochrome)
+- Layout: black sidebar (nav) + white main workspace; no shadows/rounded corners; borders 2px solid black.
+- Palette: white (#FFF) primary background; black (#000) for text/borders; optional light grays (#E5E5E5/#AAA/#666) only for gridlines/secondary text.
+- Components: boxed panels/cards (`border-2 border-black`), boxy buttons (primary: black bg/white text; secondary inverse), inputs with black borders, tables with black gridlines, monochrome badges/pills.
+- Connection pills: global API and SSE status visible in top bar; SSE shows “Off (stub)” if not connected.
+- Routes: `/chat`, `/worklog`, `/agents`, `/approvals`, `/runs`, `/receipts`, `/cost`.
+- States: loading via skeleton/outline placeholders (not implemented beyond stubs), empty via boxed “No X yet”, errors via boxed alert with retry.
+- SSE fallback label when not connected; no hidden colors or gradients.

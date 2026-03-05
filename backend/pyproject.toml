@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "brain-backend"
+version = "0.0.1"
+description = "Local-first AI OS backend (FastAPI)"
+authors = [{ name = "Brain" }]
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.110.0,<0.112",
+  "uvicorn[standard]>=0.27.1,<0.29",
+  "httpx>=0.27.0,<0.28",
+  "pydantic>=2.6,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0,<9.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.ruff]
+line-length = 100

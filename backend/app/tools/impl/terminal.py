@@ -1,0 +1,71 @@
+"""Terminal command tool (approval required)."""
+from __future__ import annotations
+
+import asyncio
+import shlex
+import subprocess
+from typing import Any, Dict
+
+from pydantic import Field
+
+from app.tools.base import ToolArgs, ToolResult
+from app.tools.policy import requires_approval
+
+
+class TerminalArgs(ToolArgs):
+    cmd: str = Field(..., description="Command string to execute")
+    cwd: str | None = Field(default=None, description="Working directory")
+    timeout: int = Field(default=30, description="Timeout seconds")
+
+
+class TerminalTool:
+    name = "terminal.run"
+    risk_level = "high"
+    args_model = TerminalArgs
+
+    def requires_approval(self, args: TerminalArgs, context: Dict[str, Any]) -> bool:
+        return requires_approval(self.name, args.dict())
+
+    async def execute(self, args: TerminalArgs, context: Dict[str, Any]) -> ToolResult:
+        cmd_list = shlex.split(args.cmd)
+        proc = await asyncio.create_subprocess_exec(
+            *cmd_list,
+            cwd=args.cwd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        try:
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=args.timeout)
+        except asyncio.TimeoutError:
+            proc.kill()
+            raise
+
+        stdout_clean, out_trunc = _sanitize(stdout.decode())
+        stderr_clean, err_trunc = _sanitize(stderr.decode())
+        return ToolResult(
+            ok=proc.returncode == 0,
+            request={"cmd": args.cmd, "cwd": args.cwd},
+            result={
+                "stdout": stdout_clean,
+                "stderr": stderr_clean,
+                "exit_code": proc.returncode,
+                "truncated": out_trunc or err_trunc,
+            },
+        )
+
+
+def _sanitize(text: str, limit: int = 4000) -> tuple[str, bool]:
+    redacted = _redact(text)
+    if len(redacted) <= limit:
+        return redacted, False
+    return redacted[:limit], True
+
+
+def _redact(text: str) -> str:
+    # naive redaction for tokens/keys
+    keywords = ["apikey=", "api_key=", "token=", "secret=", "password="]
+    out = text
+    for kw in keywords:
+        if kw in out:
+            out = out.replace(kw, f"{kw}***")
+    return out

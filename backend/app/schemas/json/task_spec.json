@@ -1,0 +1,142 @@
+{
+  "$defs": {
+    "TaskBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "ctx_tok": {
+          "default": 1200,
+          "title": "Ctx Tok",
+          "type": "integer"
+        },
+        "out_tok": {
+          "default": 600,
+          "title": "Out Tok",
+          "type": "integer"
+        },
+        "cloud_usd_cap": {
+          "default": 5,
+          "title": "Cloud Usd Cap",
+          "type": "number"
+        }
+      },
+      "title": "TaskBudget",
+      "type": "object"
+    },
+    "TaskContextRefs": {
+      "additionalProperties": false,
+      "properties": {
+        "mem": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Mem",
+          "type": "array"
+        },
+        "rag": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rag",
+          "type": "array"
+        },
+        "rcpt": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rcpt",
+          "type": "array"
+        }
+      },
+      "title": "TaskContextRefs",
+      "type": "object"
+    },
+    "TaskPolicies": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_web": {
+          "default": false,
+          "title": "Allow Web",
+          "type": "boolean"
+        },
+        "allow_cloud": {
+          "default": false,
+          "title": "Allow Cloud",
+          "type": "boolean"
+        },
+        "require_approval": {
+          "default": true,
+          "title": "Require Approval",
+          "type": "boolean"
+        }
+      },
+      "title": "TaskPolicies",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Compact, versioned task specification produced by the router.",
+  "properties": {
+    "v": {
+      "default": 1,
+      "title": "V",
+      "type": "integer"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "g": {
+      "title": "G",
+      "type": "string"
+    },
+    "u": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "U"
+    },
+    "a": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "A"
+    },
+    "c": {
+      "additionalProperties": true,
+      "title": "C",
+      "type": "object"
+    },
+    "o": {
+      "additionalProperties": true,
+      "title": "O",
+      "type": "object"
+    },
+    "pol": {
+      "$ref": "#/$defs/TaskPolicies"
+    },
+    "ctx": {
+      "$ref": "#/$defs/TaskContextRefs"
+    },
+    "bdg": {
+      "$ref": "#/$defs/TaskBudget"
+    }
+  },
+  "required": [
+    "id",
+    "g"
+  ],
+  "title": "TaskSpec",
+  "type": "object"
+}
