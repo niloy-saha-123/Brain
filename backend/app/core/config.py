@@ -23,6 +23,11 @@ class Settings:
     log_level: str = "INFO"
     state_dir: str = "state"
     db_file: str = "brain.db"
+    router_model: str = "llama3.2:3b"
+    general_model: str = "llama3.2:3b"
+    coder_model: str = "deepseek-coder:6.7b"
+    ollama_timeout: float = 30.0
+    ollama_context_window: int = 4096
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -38,6 +43,13 @@ class Settings:
         settings.log_level = os.getenv("BRAIN_LOG_LEVEL", settings.log_level).upper()
         settings.state_dir = os.getenv("BRAIN_STATE_DIR", settings.state_dir)
         settings.db_file = os.getenv("BRAIN_DB_FILE", settings.db_file)
+        settings.router_model = os.getenv("BRAIN_ROUTER_MODEL", settings.router_model)
+        settings.general_model = os.getenv("BRAIN_GENERAL_MODEL", settings.general_model)
+        settings.coder_model = os.getenv("BRAIN_CODER_MODEL", settings.coder_model)
+        settings.ollama_timeout = float(os.getenv("BRAIN_OLLAMA_TIMEOUT", settings.ollama_timeout))
+        settings.ollama_context_window = int(
+            os.getenv("BRAIN_OLLAMA_CTX", settings.ollama_context_window)
+        )
         return settings
 
     def ollama_health_url(self) -> str:
