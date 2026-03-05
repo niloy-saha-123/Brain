@@ -9,7 +9,7 @@ The codebase **does not** install system dependencies for you.
 - macOS
 - Python 3.11+
 - Node.js 18+
-- pnpm (recommended)
+- npm (used in commands below)
 - Git
 - Ollama installed and running
 
