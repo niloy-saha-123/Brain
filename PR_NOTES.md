@@ -4,6 +4,7 @@
 - Added FastAPI app skeleton with CORS middleware and health endpoints.
 - Introduced config loader with safe defaults and placeholder logging setup.
 - Created backend scaffolding files matching the architecture outline plus placeholder READMEs.
+- Fixed `/health/ollama` response annotation to avoid FastAPI response_model errors.
 
 ## Files touched
 - backend/app/main.py; backend/app/api/health.py; backend/app/core/config.py
