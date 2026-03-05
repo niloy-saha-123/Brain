@@ -33,6 +33,13 @@
 | Security hardening (paths/SSRF/redaction/artifacts) | feat/v0.2-security | Done | 00bc7e9 | python -m pytest app/tests; filesystem.read requires approval and allowlist then succeeds; web.fetch blocks 127.0.0.1; terminal output over 2k chars writes artifact | Added fs_allowlist table; receipts/artifacts truncation/redaction; stronger SSRF guard |
 | Hotfix: approvals parsing + filesystem dir read | feat/v0.2-hotfix-approvals-fs | Done | d4ee0e7 | python -m pytest app/tests; approval resolve works when request stored as JSON string; filesystem.read on directory returns entries list | Added dir listing result for filesystem.read; approval resolve parses stored JSON strings |
 
+## v0.3 Milestones (proposed)
+| Milestone | Branch (to create) | Status | Last commit | Verification | Notes |
+|---|---|---|---|---|---|
+| Planner design + scoring model | feat/v0.3-planner | Not started |  |  | Define planner contracts, scoring factors, store planner traces |
+| Planner execution engine | feat/v0.3-exec | Not started |  |  | Implement scoring-based planner selecting tools/agent, predict approvals, emit trace/worklog |
+| UI surfaces for planner + approvals | feat/v0.3-ui | Not started |  |  | Show plan/trace/predicted approvals in Chat/Worklog |
+
 ## Current decisions (keep updated)
 - Runtime: Ollama
 - UI: React + Vite
