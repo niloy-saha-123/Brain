@@ -1,7 +1,7 @@
 # STATUS
 
-**Branch:** feat/v0.2-security  
-**Latest commit:** a1191a0315623b2179415abbc6923fdc184a0805
+**Branch:** feat/v0.2-hotfix-approvals-fs  
+**Latest commit:** d4ee0e7a3db8b2dfc1ab4cde28c0c0d804b3c3b1
 
 ## v0.2 Milestones (from task_v0.2.md)
 | Milestone | Status | Evidence |
@@ -10,6 +10,7 @@
 | Orchestrator: plan → tool selection → approvals → execution (>=3 tools) | Done | `backend/app/orchestrator/graph.py` (step tracking/pause-resume), `backend/app/orchestrator/nodes/plan.py`, tests `backend/app/tests/test_runs.py` |
 | Memory/RAG: approved folder indexing + LanceDB + retrieval + citations | Done | `backend/app/tools/impl/rag_index.py`, `backend/app/memory/rag.py`, `backend/app/api/memory.py`, tests `backend/app/tests/test_rag.py`, UI `ui/src/pages/ChatPage.tsx` |
 | Security hardening: fs allowlists, SSRF, artifacts/redaction | Done | `backend/app/db/repo_fs_allowlist.py`, `backend/app/tools/impl/filesystem.py`, `backend/app/tools/impl/web.py`, `backend/app/tools/runner.py`, tests `backend/app/tests/test_security.py` |
+| Hotfix: approval parsing + filesystem dir read | Done | `backend/app/api/approvals.py` (parse JSON string request), `backend/app/tools/impl/filesystem.py` (dir listing), tests `backend/app/tests/test_security.py` |
 
 ## Spec Checklist (ARCHITECTURE.md)
 | Requirement | Status | Key files / functions |
@@ -23,6 +24,7 @@
 | RAG indexing requires approval & path allowlist | Implemented | `backend/app/tools/impl/rag_index.py`, `backend/app/api/approvals.py`, `backend/app/db/repo_fs_allowlist.py` |
 | SSRF protections for web.fetch | Implemented | `backend/app/tools/impl/web.py` |
 | Output truncation/artifact storage & redaction in receipts | Implemented | `backend/app/tools/runner.py` |
+| filesystem.read returns directory listing for folders | Implemented | `backend/app/tools/impl/filesystem.py` |
 | UI monochrome layout with routed panels (chat/worklog/agents/approvals/runs/receipts/cost) | Implemented | `ui/src/pages/*.tsx`, `ui/src/components/Layout.tsx`, `ui/src/styles.css` |
 | Cost meter & budgets | Implemented | `backend/app/api/costs.py`, `ui/src/pages/CostPage.tsx` |
 | Tests covering health/approvals/receipts/runs/agents/rag/security | Implemented | `backend/app/tests/*.py` |

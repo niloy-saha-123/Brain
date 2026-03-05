@@ -31,7 +31,7 @@
 | Orchestrator planning + multi-tool execution | feat/v0.2-orchestrator | Done | a9e49e2 | python -m pytest app/tests; start run with goal 'terminal' pauses for approval; resolve approval then resume_run_after_approval completes remaining steps | Plan builds tool list (todo/web/filesystem/terminal); step index tracking resumes after approvals; supports multiple approvals |
 | Memory/RAG indexing + retrieval + citations | feat/v0.2-rag | Done | bc4d973 | python -m pytest app/tests; POST /rag/index for a folder -> approval required -> resolve -> chunks stored; GET /rag/search returns citations | hash-based local embeddings; optional LanceDB fallback; allowlist records approval_id per path |
 | Security hardening (paths/SSRF/redaction/artifacts) | feat/v0.2-security | Done | 00bc7e9 | python -m pytest app/tests; filesystem.read requires approval and allowlist then succeeds; web.fetch blocks 127.0.0.1; terminal output over 2k chars writes artifact | Added fs_allowlist table; receipts/artifacts truncation/redaction; stronger SSRF guard |
-| Hotfix: approvals parsing + filesystem dir read | feat/v0.2-hotfix-approvals-fs | In progress |  |  | Fix approval.resolve parsing JSON text; filesystem.read returns dir listing |
+| Hotfix: approvals parsing + filesystem dir read | feat/v0.2-hotfix-approvals-fs | Done | d4ee0e7 | python -m pytest app/tests; approval resolve works when request stored as JSON string; filesystem.read on directory returns entries list | Added dir listing result for filesystem.read; approval resolve parses stored JSON strings |
 
 ## Current decisions (keep updated)
 - Runtime: Ollama
