@@ -66,3 +66,4 @@ See `SETUP.md`.
 - Verified step 7: Approval gating publishes requests/resolutions and is wired to events/runner.
 - Verified step 8: Orchestrator stubs (route→rewrite→context→plan→execute→verify→finalize) and run state are in place.
 - Verified step 9: Memory/RAG placeholders added (facts store + RAG stubs).
+- Verified step 10: UI scaffold (Vite/React) with stub panels is set up.

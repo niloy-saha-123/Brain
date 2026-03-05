@@ -1,24 +1,18 @@
-# PR Notes — feat/memory-rag
+# PR Notes — feat/ui-scaffold
 
 ## What changed
-- Added memory facts store wrapper and helper to save/list facts (persist via repo_memory).
-- Added placeholders for RAG pipeline (chunk, dedup, embed, LanceDB store, retrieve stub).
-- No embedding or LanceDB integration yet—stubs only.
+- Added Vite/React scaffold with entrypoint, App page, and stub panels (Chat, WorkLog, Agents, Approvals, Runs, Receipts, Cost Meter).
+- Added basic styling shell and API base placeholders.
 
 ## Files touched
-- backend/app/memory/store.py, facts.py, rag.py, lancedb_store.py, embed.py, chunk.py, dedup.py
+- ui/index.html, package.json, tsconfig.json, vite.config.ts
+- ui/src/main.tsx, src/pages/App.tsx, src/components/*.tsx, src/api/*.ts, src/styles.css
 - README.md, PROGRESS.md, PR_NOTES.md
 
 ## How to verify
-1. Save a fact in REPL:
-   ```python
-   from app.memory.facts import save_fact, list_facts
-   save_fact("pref.theme", "dark")
-   list_facts()
-   ```
-2. Check DB: `sqlite3 backend/state/brain.db "select key,value from memory_facts limit 5;"` (adjust path if state dir differs).
-3. RAG retrieve stub returns empty list: `from app.memory.rag import retrieve; retrieve("test")`
+1. Install deps (user-run): `cd ui && npm install` (or pnpm/yarn).
+2. `npm run dev` and open http://localhost:5173 — should render stub panels grid.
 
 ## Commands to run
-- `cd backend && python -m pip install -e ".[dev]"` (if not already)
-- `sqlite3 backend/state/brain.db "select count(*) from memory_facts;"`
+- `cd ui && npm install`
+- `npm run dev`
