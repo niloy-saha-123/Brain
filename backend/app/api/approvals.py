@@ -16,7 +16,7 @@ def list_pending():
 
 
 @router.post("/approvals/{approval_id}/resolve")
-def resolve_approval(approval_id: str, decision: dict):
+async def resolve_approval(approval_id: str, decision: dict):
     approval = repo_approvals.get_approval(approval_id)
     if not approval:
         raise HTTPException(status_code=404, detail="not found")
@@ -33,8 +33,5 @@ def resolve_approval(approval_id: str, decision: dict):
         "run_id": approval.get("run_id"),
         "status": status,
     }
-    # fire-and-forget
-    import asyncio
-
-    asyncio.create_task(event_bus.publish(event))
+    await event_bus.publish(event)
     return {"status": "ok"}
