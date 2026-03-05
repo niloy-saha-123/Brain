@@ -30,7 +30,7 @@
 | Agents CRUD (backend + UI wiring) | feat/v0.2-agents | Done | db91211 | python -m pytest app/tests; UI Agents page can create/update/delete agents via API | Branch work tracked on feat/v0.2-backlog; agent_id auto if blank |
 | Orchestrator planning + multi-tool execution | feat/v0.2-orchestrator | Done | a9e49e2 | python -m pytest app/tests; start run with goal 'terminal' pauses for approval; resolve approval then resume_run_after_approval completes remaining steps | Plan builds tool list (todo/web/filesystem/terminal); step index tracking resumes after approvals; supports multiple approvals |
 | Memory/RAG indexing + retrieval + citations | feat/v0.2-rag | Done | bc4d973 | python -m pytest app/tests; POST /rag/index for a folder -> approval required -> resolve -> chunks stored; GET /rag/search returns citations | hash-based local embeddings; optional LanceDB fallback; allowlist records approval_id per path |
-| Security hardening (paths/SSRF/redaction/artifacts) | feat/v0.2-security | Not started |  |  | Filesystem allowlists per approval; SSRF guard; output truncation/artifacts |
+| Security hardening (paths/SSRF/redaction/artifacts) | feat/v0.2-security | Done | 0ab23cb | python -m pytest app/tests; filesystem.read requires approval and allowlist then succeeds; web.fetch blocks 127.0.0.1; terminal output over 2k chars writes artifact | Added fs_allowlist table; receipts/artifacts truncation/redaction; stronger SSRF guard |
 
 ## Current decisions (keep updated)
 - Runtime: Ollama
