@@ -1,3 +1,8 @@
-"""Placeholder for time.py; to be implemented in later milestone."""
+"""Time utilities."""
+from __future__ import annotations
 
-# TODO: implement time.py
+from datetime import datetime, timezone
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()

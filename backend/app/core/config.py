@@ -21,6 +21,8 @@ class Settings:
     ollama_base_url: str = "http://localhost:11434"
     cors_origins: List[str] = field(default_factory=lambda: DEFAULT_CORS_ORIGINS.copy())
     log_level: str = "INFO"
+    state_dir: str = "state"
+    db_file: str = "brain.db"
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -34,6 +36,8 @@ class Settings:
         if cors_raw:
             settings.cors_origins = [origin.strip() for origin in cors_raw.split(",") if origin.strip()]
         settings.log_level = os.getenv("BRAIN_LOG_LEVEL", settings.log_level).upper()
+        settings.state_dir = os.getenv("BRAIN_STATE_DIR", settings.state_dir)
+        settings.db_file = os.getenv("BRAIN_DB_FILE", settings.db_file)
         return settings
 
     def ollama_health_url(self) -> str:
