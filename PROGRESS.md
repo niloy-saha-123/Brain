@@ -16,7 +16,7 @@
 | Ollama client (streaming) | feat/ollama-client | Done | 2b337de | POST /debug/llm streams tokens from Ollama; model registry uses env-configured models | Defaults: general/router=llama3.2:3b, coder=deepseek-coder:6.7b; override via env |
 | SSE event bus | feat/sse-events | Done | 57adec7 | GET /runs/{run_id}/events streams SSE (heartbeat + events) | Uses in-process EventBus; format follows event: <type>, data: JSON |
 | Tools + receipts | feat/tools-receipts | Done | c2d8362 | Tool base/registry/runner implemented; approvals + receipts endpoints exposed | Sensitive tools gated; receipts stored via repo_receipts |
-| Approvals inbox + gating | feat/approvals | Not started |  |  |  |
+| Approvals inbox + gating | feat/approvals | Done | ba0083e | Tool runner creates approval requests and emits events; approvals resolve endpoint publishes resolution | Approval required for sensitive tools; SSE gets approval_requested/resolved events |
 | Orchestrator (LangGraph) | feat/orchestrator | Not started |  |  |  |
 | Memory + RAG (LanceDB) | feat/memory-rag | Not started |  |  |  |
 | UI scaffold | feat/ui-scaffold | Not started |  |  |  |

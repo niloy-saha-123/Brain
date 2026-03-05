@@ -63,3 +63,4 @@ See `SETUP.md`.
 - Verified step 4: Ollama client with streaming and /debug/llm endpoint is available.
 - Verified step 5: SSE event bus with /runs/{run_id}/events streaming endpoint is available.
 - Verified step 6: Tool system skeleton with approvals/receipts endpoints is available.
+- Verified step 7: Approval gating publishes requests/resolutions and is wired to events/runner.
