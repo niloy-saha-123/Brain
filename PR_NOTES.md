@@ -1,28 +1,24 @@
-# PR Notes — feat/orchestrator
+# PR Notes — feat/memory-rag
 
 ## What changed
-- Added orchestrator stubs: RunState and node functions (route, rewrite, context, plan, execute, verify, finalize) plus graph starter that logs worklog/status events.
-- Runs are recorded in DB and immediately marked completed (stub) while emitting events.
+- Added memory facts store wrapper and helper to save/list facts (persist via repo_memory).
+- Added placeholders for RAG pipeline (chunk, dedup, embed, LanceDB store, retrieve stub).
+- No embedding or LanceDB integration yet—stubs only.
 
 ## Files touched
-- backend/app/orchestrator/state.py
-- backend/app/orchestrator/graph.py
-- backend/app/orchestrator/nodes/*.py
+- backend/app/memory/store.py, facts.py, rag.py, lancedb_store.py, embed.py, chunk.py, dedup.py
 - README.md, PROGRESS.md, PR_NOTES.md
 
 ## How to verify
-1. Start backend: `cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`.
-2. (Stub) call `start_run` from a REPL:
+1. Save a fact in REPL:
    ```python
-   from app.orchestrator.graph import start_run
-   from app.schemas import TaskSpec
-   import asyncio
-   ts = TaskSpec(id="run_orch", g="test", v=1)
-   asyncio.run(start_run(ts))
+   from app.memory.facts import save_fact, list_facts
+   save_fact("pref.theme", "dark")
+   list_facts()
    ```
-3. Check run recorded: `sqlite3 ../state/brain.db "select run_id,status from runs where run_id='run_orch';"`
-4. Stream events: `curl -N http://localhost:8000/runs/run_orch/events` (should show status/worklog).
+2. Check DB: `sqlite3 backend/state/brain.db "select key,value from memory_facts limit 5;"` (adjust path if state dir differs).
+3. RAG retrieve stub returns empty list: `from app.memory.rag import retrieve; retrieve("test")`
 
 ## Commands to run
-- `cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
-- `curl -N http://localhost:8000/runs/run_orch/events`
+- `cd backend && python -m pip install -e ".[dev]"` (if not already)
+- `sqlite3 backend/state/brain.db "select count(*) from memory_facts;"`
