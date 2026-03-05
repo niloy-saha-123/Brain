@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import health, llm
+from app.events import sse as sse_events
 from app.core.config import get_settings, setup_logging
 from app.db.migrate import ensure_db_ready
 
@@ -29,6 +30,7 @@ def create_app() -> FastAPI:
 
     app.include_router(health.router)
     app.include_router(llm.router)
+    app.include_router(sse_events.router)
 
     return app
 
