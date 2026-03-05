@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from app.tools.registry import registry
 from app.tools.policy import requires_approval
 from app.tools.base import ToolResult, ToolError
-from app.db import repo_receipts
+from app.db import repo_receipts, repo_runs
 from app.core.time import now_iso
 from app.db.sqlite import to_json
 
@@ -27,6 +27,10 @@ async def run_tool(tool_name: str, args: Dict[str, Any], context: Dict[str, Any]
 
 async def _store_receipt(receipt_id: str, tool_name: str, result: ToolResult, context: Dict[str, Any]) -> None:
     run_id = context.get("run_id", "unknown")
+    # Ensure run exists to satisfy FK; create stub if missing.
+    existing = repo_runs.get_run(run_id)
+    if not existing:
+        repo_runs.create_run({"run_id": run_id, "status": "running", "created_at": now_iso()})
     payload = {
         "receipt_id": receipt_id,
         "run_id": run_id,
