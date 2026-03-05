@@ -26,8 +26,8 @@ async def health() -> Dict[str, Any]:
     }
 
 
-@router.get("/health/ollama", summary="Check connectivity to local Ollama")
-async def health_ollama(settings: Settings = Depends(get_settings)) -> JSONResponse | Dict[str, Any]:
+@router.get("/health/ollama", summary="Check connectivity to local Ollama", response_model=None)
+async def health_ollama(settings: Settings = Depends(get_settings)) -> Any:
     url = settings.ollama_health_url()
     try:
         async with httpx.AsyncClient(timeout=2.0) as client:
