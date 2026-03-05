@@ -57,3 +57,4 @@ See `SETUP.md`.
 
 ## Verified steps
 - Verified step 0: repo initialized with specs + workflow files.
+- Verified step 1: backend skeleton with health endpoints and CORS is in place.

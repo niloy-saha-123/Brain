@@ -10,7 +10,7 @@
 ## Milestones
 | Milestone | Branch | Status | Last commit | Verification | Notes |
 |---|---|---|---|---|---|
-| Backend skeleton + health | feat/backend-skeleton | Not started |  |  |  |
+| Backend skeleton + health | feat/backend-skeleton | Done | 1b18576 | Start uvicorn; GET /health returns ok; GET /health/ollama returns ok or 503 gracefully | Install backend deps; Ollama optional but required for healthy ollama response |
 | SQLite schema + repos | feat/db-schema | Not started |  |  |  |
 | Schemas (Pydantic + JSON schema export) | feat/schemas | Not started |  |  |  |
 | Ollama client (streaming) | feat/ollama-client | Not started |  |  |  |
