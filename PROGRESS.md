@@ -36,7 +36,7 @@
 ## v0.3 Milestones
 | Milestone | Branch | Status | Last commit | Verification | Notes |
 |---|---|---|---|---|---|
-| Planner contracts + trace persistence | feat/v0.3-planner-v2 | Done | TBD | python -m pytest app/tests; GET /runs/{run_id}/plan returns stored trace | Adds planner schemas, planner_traces table, plan_ready/step events, trace API |
+| Planner contracts + trace persistence | feat/v0.3-planner-v2 | Done | 4f8ac9a | python -m pytest app/tests; GET /runs/{run_id}/plan returns stored trace | Adds planner schemas, planner_traces table, plan_ready/step events, trace API |
 | Planner v2 execution (deterministic multi-step) | feat/v0.3-exec | Not started |  |  | Multi-step planner with approvals prediction and execution |
 | UI plan visibility + approvals prediction | feat/v0.3-ui | Not started |  |  | Show plan/predicted approvals/step progress in UI |
 

@@ -1,7 +1,7 @@
 # STATUS
 
-**Branch:** feat/v0.2-hotfix-approvals-fs  
-**Latest commit:** d4ee0e7a3db8b2dfc1ab4cde28c0c0d804b3c3b1
+**Branch:** feat/v0.3-planner-v2  
+**Latest commit:** 4f8ac9a7e9c8b3c3d1e2f6d31c2c7d0cbe9abf4b
 
 ## v0.2 Milestones (from task_v0.2.md)
 | Milestone | Status | Evidence |
@@ -11,6 +11,7 @@
 | Memory/RAG: approved folder indexing + LanceDB + retrieval + citations | Done | `backend/app/tools/impl/rag_index.py`, `backend/app/memory/rag.py`, `backend/app/api/memory.py`, tests `backend/app/tests/test_rag.py`, UI `ui/src/pages/ChatPage.tsx` |
 | Security hardening: fs allowlists, SSRF, artifacts/redaction | Done | `backend/app/db/repo_fs_allowlist.py`, `backend/app/tools/impl/filesystem.py`, `backend/app/tools/impl/web.py`, `backend/app/tools/runner.py`, tests `backend/app/tests/test_security.py` |
 | Hotfix: approval parsing + filesystem dir read | Done | `backend/app/api/approvals.py` (parse JSON string request), `backend/app/tools/impl/filesystem.py` (dir listing), tests `backend/app/tests/test_security.py` |
+| Planner contracts + trace persistence (v0.3 M1) | Done | `backend/app/schemas/planner.py`, `backend/app/db/repo_planner_traces.py`, `backend/app/api/runs.py` (/runs/{id}/plan), events `plan_ready/step_*`, tests `backend/app/tests/test_planner.py` |
 
 ## Spec Checklist (ARCHITECTURE.md)
 | Requirement | Status | Key files / functions |
@@ -29,9 +30,9 @@
 | Cost meter & budgets | Implemented | `backend/app/api/costs.py`, `ui/src/pages/CostPage.tsx` |
 | Tests covering health/approvals/receipts/runs/agents/rag/security | Implemented | `backend/app/tests/*.py` |
 
-## Next 5 Tasks (minimal path to v0.2 completion)
-1) Verify end-to-end on macOS: `cd backend && python -m pytest app/tests`; `uvicorn app.main:app --reload`; `cd ui && npm install && npm run dev`.
-2) Manual approval/resume check: start run with goal containing “terminal”, resolve approval via `/approvals/{id}/resolve`, confirm run completes.
-3) RAG flow check: `POST /rag/index` on a repo folder, approve, then `GET /rag/search?query=...` shows citations; confirm artifacts written under `backend/state/artifacts`.
-4) UI smoke: in dev server visit `/chat` to start run, see worklog/status, RAG hits panel, and receipt list; visit `/approvals`, `/runs`, `/receipts`, `/cost`.
-5) Prepare PRs from `feat/v0.2-*` branches into main (no merge yet); ensure PROGRESS.md/PR_NOTES.md align and note Pydantic v2 warnings as follow-up.
+## Next 5 Tasks (v0.3 path)
+1) Verify planner trace: start a run (`list files`), then `curl http://localhost:8000/runs/<run_id>/plan` returns stored trace with steps and predicted_approvals.
+2) Watch SSE for plan/step events via `/runs/<run_id>/events` (expect `plan_ready`, `step_started`, `step_completed`, `step_paused_for_approval` when approval required).
+3) Confirm no regressions: `cd backend && python -m pytest app/tests` (18 pass; Pydantic deprecation warnings expected).
+4) Decide scope/acceptance for v0.3 Milestones 2–3 (planner execution heuristics, UI plan view).
+5) After approval, branch off for Milestone 2 implementation (`feat/v0.3-exec`).
