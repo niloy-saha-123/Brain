@@ -1,0 +1,125 @@
+{
+  "$defs": {
+    "ReceiptResult": {
+      "additionalProperties": false,
+      "properties": {
+        "stdout": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stdout"
+        },
+        "stderr": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stderr"
+        },
+        "exit_code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exit Code"
+        },
+        "files_touched": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Files Touched",
+          "type": "array"
+        },
+        "artifacts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifacts",
+          "type": "array"
+        }
+      },
+      "title": "ReceiptResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "v": {
+      "default": 1,
+      "title": "V",
+      "type": "integer"
+    },
+    "receipt_id": {
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "tool": {
+      "title": "Tool",
+      "type": "string"
+    },
+    "ok": {
+      "title": "Ok",
+      "type": "boolean"
+    },
+    "ts": {
+      "title": "Ts",
+      "type": "string"
+    },
+    "request": {
+      "additionalProperties": true,
+      "title": "Request",
+      "type": "object"
+    },
+    "result": {
+      "$ref": "#/$defs/ReceiptResult"
+    },
+    "diff": {
+      "anyOf": [
+        {},
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Diff"
+    },
+    "redactions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Redactions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "run_id",
+    "tool",
+    "ok",
+    "ts",
+    "request",
+    "result"
+  ],
+  "title": "Receipt",
+  "type": "object"
+}

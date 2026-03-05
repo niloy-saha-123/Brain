@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "stdout": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stdout"
+    },
+    "stderr": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stderr"
+    },
+    "exit_code": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exit Code"
+    },
+    "files_touched": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Files Touched",
+      "type": "array"
+    },
+    "artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    }
+  },
+  "title": "ReceiptResult",
+  "type": "object"
+}

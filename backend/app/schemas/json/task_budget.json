@@ -1,0 +1,22 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "ctx_tok": {
+      "default": 1200,
+      "title": "Ctx Tok",
+      "type": "integer"
+    },
+    "out_tok": {
+      "default": 600,
+      "title": "Out Tok",
+      "type": "integer"
+    },
+    "cloud_usd_cap": {
+      "default": 5,
+      "title": "Cloud Usd Cap",
+      "type": "number"
+    }
+  },
+  "title": "TaskBudget",
+  "type": "object"
+}

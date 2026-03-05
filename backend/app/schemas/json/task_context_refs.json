@@ -1,0 +1,28 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "mem": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Mem",
+      "type": "array"
+    },
+    "rag": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rag",
+      "type": "array"
+    },
+    "rcpt": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rcpt",
+      "type": "array"
+    }
+  },
+  "title": "TaskContextRefs",
+  "type": "object"
+}

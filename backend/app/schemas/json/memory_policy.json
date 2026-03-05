@@ -1,0 +1,31 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "can_write_facts": {
+      "default": true,
+      "title": "Can Write Facts",
+      "type": "boolean"
+    },
+    "fact_tags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fact Tags",
+      "type": "array"
+    },
+    "default_ttl_days": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Default Ttl Days"
+    }
+  },
+  "title": "MemoryPolicy",
+  "type": "object"
+}

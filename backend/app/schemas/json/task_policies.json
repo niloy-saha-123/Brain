@@ -1,0 +1,22 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "allow_web": {
+      "default": false,
+      "title": "Allow Web",
+      "type": "boolean"
+    },
+    "allow_cloud": {
+      "default": false,
+      "title": "Allow Cloud",
+      "type": "boolean"
+    },
+    "require_approval": {
+      "default": true,
+      "title": "Require Approval",
+      "type": "boolean"
+    }
+  },
+  "title": "TaskPolicies",
+  "type": "object"
+}
