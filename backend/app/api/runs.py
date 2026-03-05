@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException
@@ -10,7 +11,7 @@ from pydantic import BaseModel, Field
 from app.schemas import TaskSpec
 from app.core.ids import make_run_id
 from app.orchestrator.graph import start_run
-from app.db import repo_runs
+from app.db import repo_runs, repo_planner_traces
 
 router = APIRouter()
 
@@ -40,3 +41,17 @@ def get_run(run_id: str):
     if not run:
         raise HTTPException(status_code=404, detail="not found")
     return run
+
+
+@router.get("/runs/{run_id}/plan")
+def get_run_plan(run_id: str):
+    trace = repo_planner_traces.get_trace(run_id)
+    if not trace:
+        raise HTTPException(status_code=404, detail="plan not found")
+    trace_data = trace.get("trace")
+    if isinstance(trace_data, str):
+        try:
+            trace_data = json.loads(trace_data)
+        except json.JSONDecodeError:
+            trace_data = trace_data
+    return {"run_id": run_id, "trace": trace_data, "created_at": trace.get("created_at")}

@@ -116,3 +116,10 @@ CREATE TABLE IF NOT EXISTS fs_allowlist (
     PRIMARY KEY (run_id, path),
     FOREIGN KEY (run_id) REFERENCES runs (run_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS planner_traces (
+    run_id TEXT PRIMARY KEY,
+    trace TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (run_id) REFERENCES runs (run_id) ON DELETE CASCADE
+);

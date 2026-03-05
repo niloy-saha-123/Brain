@@ -20,6 +20,7 @@ class RunState:
     current_step: int = 0
     context_facts: List[Dict[str, Any]] = field(default_factory=list)
     context_rag: List[Dict[str, Any]] = field(default_factory=list)
+    planner_decision: Dict[str, Any] = field(default_factory=dict)
 
     def add_worklog(self, msg: str) -> None:
         self.worklog.append(msg)

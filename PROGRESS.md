@@ -33,6 +33,13 @@
 | Security hardening (paths/SSRF/redaction/artifacts) | feat/v0.2-security | Done | 00bc7e9 | python -m pytest app/tests; filesystem.read requires approval and allowlist then succeeds; web.fetch blocks 127.0.0.1; terminal output over 2k chars writes artifact | Added fs_allowlist table; receipts/artifacts truncation/redaction; stronger SSRF guard |
 | Hotfix: approvals parsing + filesystem dir read | feat/v0.2-hotfix-approvals-fs | Done | d4ee0e7 | python -m pytest app/tests; approval resolve works when request stored as JSON string; filesystem.read on directory returns entries list | Added dir listing result for filesystem.read; approval resolve parses stored JSON strings |
 
+## v0.3 Milestones
+| Milestone | Branch | Status | Last commit | Verification | Notes |
+|---|---|---|---|---|---|
+| Planner contracts + trace persistence | feat/v0.3-planner-v2 | Done | TBD | python -m pytest app/tests; GET /runs/{run_id}/plan returns stored trace | Adds planner schemas, planner_traces table, plan_ready/step events, trace API |
+| Planner v2 execution (deterministic multi-step) | feat/v0.3-exec | Not started |  |  | Multi-step planner with approvals prediction and execution |
+| UI plan visibility + approvals prediction | feat/v0.3-ui | Not started |  |  | Show plan/predicted approvals/step progress in UI |
+
 ## v0.3 Milestones (proposed)
 | Milestone | Branch (to create) | Status | Last commit | Verification | Notes |
 |---|---|---|---|---|---|

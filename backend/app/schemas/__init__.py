@@ -6,6 +6,7 @@ from app.schemas.tool_call import ToolCall
 from app.schemas.receipt import Receipt, ReceiptResult
 from app.schemas.approval import Approval, ApprovalDecision
 from app.schemas.events import Event
+from app.schemas.planner import PlannerStep, PlannerDecision, PlannerTrace, PredictedApproval
 
 __all__ = [
     "TaskSpec",
@@ -20,4 +21,8 @@ __all__ = [
     "Approval",
     "ApprovalDecision",
     "Event",
+    "PlannerStep",
+    "PlannerDecision",
+    "PlannerTrace",
+    "PredictedApproval",
 ]

@@ -5,10 +5,10 @@ import asyncio
 from typing import Any, Dict, Optional
 
 from app.orchestrator.state import RunState
-from app.schemas import TaskSpec
+from app.schemas import TaskSpec, PlannerTrace, PlannerDecision
 from app.events.bus import event_bus
 from app.core.time import now_iso
-from app.db import repo_runs
+from app.db import repo_runs, repo_planner_traces
 from app.tools.runner import run_tool
 from app.tools.base import ToolError
 from app.orchestrator import pending
@@ -34,6 +34,8 @@ async def start_run(task_spec: TaskSpec) -> RunState:
     rewrite(state)
     load_context(state)
     plan(state)
+    _store_plan_trace(state)
+    await _publish_plan_ready(state)
     paused = await _execute_plan(state)
     if paused:
         return state
@@ -51,22 +53,37 @@ async def _execute_plan(state: RunState) -> bool:
     run_id = state.run_id
     for idx in range(state.current_step, len(state.plan)):
         step = state.plan[idx]
+        step_id = step.get("step_id", f"step{idx+1}")
         state.current_step = idx
         tool_name = step["tool"]
         args = step.get("args", {})
+        await event_bus.publish(
+            {"type": "step_started", "run_id": run_id, "step_id": step_id, "tool": tool_name, "ts": now_iso()}
+        )
         await _publish_worklog(run_id, f"Executing tool {tool_name}")
         receipt_id = f"r_{now_iso()}"
         try:
             result = await run_tool(tool_name, args, {"run_id": run_id, "receipt_id": receipt_id})
             state.receipts.append(receipt_id)
             await _publish_worklog(run_id, f"Tool {tool_name} ok")
+            await event_bus.publish(
+                {
+                    "type": "step_completed",
+                    "run_id": run_id,
+                    "step_id": step_id,
+                    "tool": tool_name,
+                    "ts": now_iso(),
+                }
+            )
             state.current_step = idx + 1
             if tool_name == "todo.add":
                 state.output = f"Recorded todo: {result.result.get('todo', {}).get('text', '')}"
             elif tool_name == "web.fetch":
                 state.output = result.result.get("text", "")[:200]
             elif tool_name == "filesystem.read":
-                state.output = result.result.get("content", "")[:200]
+                content = result.result.get("content")
+                if content:
+                    state.output = content[:200]
         except ToolError as exc:
             msg = str(exc)
             if "approval_id=" in msg:
@@ -77,6 +94,16 @@ async def _execute_plan(state: RunState) -> bool:
                 repo_runs.update_run_status(run_id, "awaiting_approval")
                 await _publish_status(run_id, "awaiting_approval")
                 await _publish_worklog(run_id, f"Paused awaiting approval {approval_id}")
+                await event_bus.publish(
+                    {
+                        "type": "step_paused_for_approval",
+                        "run_id": run_id,
+                        "step_id": step_id,
+                        "tool": tool_name,
+                        "approval_id": approval_id,
+                        "ts": now_iso(),
+                    }
+                )
                 return True
             else:
                 state.add_worklog(f"Tool {tool_name} failed: {msg}")
@@ -133,3 +160,33 @@ async def _publish_worklog(run_id: str, msg: str) -> None:
 
 async def _publish_status(run_id: str, status: str) -> None:
     await event_bus.publish({"type": "status", "run_id": run_id, "status": status, "ts": now_iso()})
+
+
+def _store_plan_trace(state: RunState) -> None:
+    if not state.planner_decision:
+        return
+    decision_data = state.planner_decision
+    if isinstance(decision_data, PlannerDecision):
+        decision = decision_data
+    else:
+        decision = PlannerDecision(**decision_data)
+    trace = PlannerTrace(
+        run_id=state.run_id,
+        decision=decision,
+        created_at=now_iso(),
+    )
+    repo_planner_traces.upsert_trace(trace.model_dump())
+
+
+async def _publish_plan_ready(state: RunState) -> None:
+    if not state.planner_decision:
+        return
+    await event_bus.publish(
+        {
+            "type": "plan_ready",
+            "run_id": state.run_id,
+            "steps": state.planner_decision.get("steps", []),
+            "predicted_approvals": state.planner_decision.get("predicted_approvals", []),
+            "ts": now_iso(),
+        }
+    )
