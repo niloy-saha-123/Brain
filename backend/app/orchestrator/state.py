@@ -16,6 +16,8 @@ class RunState:
     receipts: List[str] = field(default_factory=list)
     approvals: List[str] = field(default_factory=list)
     output: Optional[str] = None
+    plan: List[Dict[str, Any]] = field(default_factory=list)
+    current_step: int = 0
 
     def add_worklog(self, msg: str) -> None:
         self.worklog.append(msg)
