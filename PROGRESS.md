@@ -20,7 +20,7 @@
 | Orchestrator (LangGraph) | feat/orchestrator | Done | 5f94461 | Stub graph with route→rewrite→context→plan→execute→verify→finalize; run state persisted | Emits worklog/status events; completion immediate stub |
 | Memory + RAG (LanceDB) | feat/memory-rag | Done | 365ab53 | Memory facts store + RAG placeholders added | LanceDB/embedding deferred; stubs in place |
 | UI scaffold | feat/ui-scaffold | Done | 4b6a74c | Vite/React app scaffolded with stub panels and base styling | package.json/vite config added; panels stubbed |
-| UI panels | feat/ui-panels | Not started |  |  |  |
+| UI panels | feat/ui-panels | Done | 4b6a74c | Monochrome boxy layout with sidebar/topbar, routed panels, status pills | Requires npm install after dependency update |
 | Cost meter hooks | feat/cost-meter | Not started |  |  |  |
 | Tests + polish | test/polish | Not started |  |  |  |
 

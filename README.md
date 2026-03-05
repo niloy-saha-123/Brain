@@ -67,3 +67,13 @@ See `SETUP.md`.
 - Verified step 8: Orchestrator stubs (route→rewrite→context→plan→execute→verify→finalize) and run state are in place.
 - Verified step 9: Memory/RAG placeholders added (facts store + RAG stubs).
 - Verified step 10: UI scaffold (Vite/React) with stub panels is set up.
+- Verified step 11: UI panels wired with monochrome boxy layout, routing, and status pills.
+
+## UI spec (monochrome)
+- Layout: black sidebar (nav) + white main workspace; no shadows/rounded corners; borders 2px solid black.
+- Palette: white (#FFF) primary background; black (#000) for text/borders; optional light grays (#E5E5E5/#AAA/#666) only for gridlines/secondary text.
+- Components: boxed panels/cards (`border-2 border-black`), boxy buttons (primary: black bg/white text; secondary inverse), inputs with black borders, tables with black gridlines, monochrome badges/pills.
+- Connection pills: global API and SSE status visible in top bar; SSE shows “Off (stub)” if not connected.
+- Routes: `/chat`, `/worklog`, `/agents`, `/approvals`, `/runs`, `/receipts`, `/cost`.
+- States: loading via skeleton/outline placeholders (not implemented beyond stubs), empty via boxed “No X yet”, errors via boxed alert with retry.
+- SSE fallback label when not connected; no hidden colors or gradients.

@@ -1,26 +1,30 @@
 import React from 'react'
-import Chat from '../components/Chat'
-import WorkLog from '../components/WorkLog'
-import AgentsPanel from '../components/AgentsPanel'
-import ApprovalsInbox from '../components/ApprovalsInbox'
-import RunsPanel from '../components/RunsPanel'
-import ReceiptsViewer from '../components/ReceiptsViewer'
-import CostMeter from '../components/CostMeter'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Layout from '../components/Layout'
+import ChatPage from './ChatPage'
+import WorklogPage from './WorklogPage'
+import AgentsPage from './AgentsPage'
+import ApprovalsPage from './ApprovalsPage'
+import RunsPage from './RunsPage'
+import ReceiptsPage from './ReceiptsPage'
+import CostPage from './CostPage'
 
 const App: React.FC = () => {
   return (
-    <div className="app-shell">
-      <header className="app-header">brain</header>
-      <main className="app-main">
-        <section className="panel chat"><Chat /></section>
-        <section className="panel worklog"><WorkLog /></section>
-        <section className="panel agents"><AgentsPanel /></section>
-        <section className="panel approvals"><ApprovalsInbox /></section>
-        <section className="panel runs"><RunsPanel /></section>
-        <section className="panel receipts"><ReceiptsViewer /></section>
-        <section className="panel cost"><CostMeter /></section>
-      </main>
-    </div>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/worklog" element={<WorklogPage />} />
+          <Route path="/agents" element={<AgentsPage />} />
+          <Route path="/approvals" element={<ApprovalsPage />} />
+          <Route path="/runs" element={<RunsPage />} />
+          <Route path="/receipts" element={<ReceiptsPage />} />
+          <Route path="/cost" element={<CostPage />} />
+          <Route path="*" element={<Navigate to="/chat" replace />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   )
 }
 

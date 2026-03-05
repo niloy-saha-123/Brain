@@ -1,17 +1,22 @@
-# PR Notes — feat/ui-scaffold
+# PR Notes — feat/ui-panels
 
 ## What changed
-- Added Vite/React scaffold with entrypoint, App page, and stub panels (Chat, WorkLog, Agents, Approvals, Runs, Receipts, Cost Meter).
-- Added basic styling shell and API base placeholders.
+- Implemented monochrome, boxy UI layout with black sidebar, white workspace, topbar status pills.
+- Added routed panels for Chat, Worklog, Agents, Approvals, Runs, Receipts, Cost with stub content and empty/placeholder states.
+- Added connection/SSE status pills (stubbed), consistent 2px black borders, no colors/gradients.
+- Added `@vitejs/plugin-react` dependency (npm install required).
 
 ## Files touched
-- ui/index.html, package.json, tsconfig.json, vite.config.ts
-- ui/src/main.tsx, src/pages/App.tsx, src/components/*.tsx, src/api/*.ts, src/styles.css
+- ui/package.json (dependency update), ui/package-lock.json (generated previously)
+- ui/src/pages/* (ChatPage, WorklogPage, AgentsPage, ApprovalsPage, RunsPage, ReceiptsPage, CostPage)
+- ui/src/components/Layout.tsx, ConnectionPill.tsx, SSEStatus.tsx
+- ui/src/styles.css
 - README.md, PROGRESS.md, PR_NOTES.md
 
 ## How to verify
-1. Install deps (user-run): `cd ui && npm install` (or pnpm/yarn).
-2. `npm run dev` and open http://localhost:5173 — should render stub panels grid.
+1. `cd ui && npm install` (to pick up @vitejs/plugin-react).
+2. `npm run dev` and open http://localhost:5173.
+3. Navigate sidebar items; verify boxy monochrome layout, status pills, stub panels render without errors.
 
 ## Commands to run
 - `cd ui && npm install`
