@@ -32,12 +32,19 @@ class FilesystemReadTool:
     async def execute(self, args: FSReadArgs, context: Dict[str, Any]) -> ToolResult:
         path = _safe_path(args.path)
         _ensure_allowed(path, context)
+        if path.is_dir():
+            entries = sorted(p.name for p in path.iterdir())
+            return ToolResult(
+                ok=True,
+                request={"path": str(path)},
+                result={"is_dir": True, "entries": entries},
+            )
         content = path.read_text(encoding="utf-8")
         truncated, was_truncated = _truncate(content)
         return ToolResult(
             ok=True,
             request={"path": str(path)},
-            result={"content": truncated, "truncated": was_truncated},
+            result={"is_dir": False, "content": truncated, "truncated": was_truncated},
         )
 
 

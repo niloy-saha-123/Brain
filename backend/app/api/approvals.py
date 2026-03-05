@@ -1,6 +1,7 @@
 """Approvals placeholder endpoints (list pending, resolve)."""
 from __future__ import annotations
 
+import json
 from fastapi import APIRouter, HTTPException
 
 from app.db import repo_approvals, repo_runs, repo_fs_allowlist
@@ -42,7 +43,14 @@ async def resolve_approval(approval_id: str, decision: dict):
 
     # Auto-handle RAG indexing approvals
     if approval.get("type") == "rag.index" and status == "approved":
-        req = approval.get("request") or {}
+        req_raw = approval.get("request") or {}
+        if isinstance(req_raw, str):
+            try:
+                req = json.loads(req_raw)
+            except json.JSONDecodeError:
+                req = {}
+        else:
+            req = req_raw
         details = req.get("details") or {}
         path = details.get("path")
         run_id = approval.get("run_id")
@@ -54,7 +62,15 @@ async def resolve_approval(approval_id: str, decision: dict):
             except ToolError:
                 pass
     if approval.get("type") in {"filesystem.read", "filesystem.write"} and status == "approved":
-        details = (approval.get("request") or {}).get("details") or {}
+        req_raw = approval.get("request") or {}
+        if isinstance(req_raw, str):
+            try:
+                req = json.loads(req_raw)
+            except json.JSONDecodeError:
+                req = {}
+        else:
+            req = req_raw
+        details = req.get("details") or {}
         path = details.get("path")
         run_id = approval.get("run_id")
         if path and run_id:

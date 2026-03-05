@@ -29,7 +29,7 @@ ollama serve   # ensure a model like llama3.2:3b is pulled
 
 2) **Start a run from Chat**
    - On `/chat`, enter goal: `list files` and click **Send**.
-   - Expected: New run thread appears with status `queued` → `running`; worklog shows planning/execution messages.
+   - Expected: New run thread appears with status `queued` → `running`; worklog shows planning/execution messages (may pause awaiting approval for filesystem.read).
 
 3) **Observe SSE worklog/status**
    - Watch worklog list update without refresh.
@@ -45,7 +45,7 @@ ollama serve   # ensure a model like llama3.2:3b is pulled
 
 6) **Confirm receipt creation**
    - Back on `/chat`, receipts panel shows a new receipt entry; alternatively GET `http://localhost:8000/runs/<run_id>/receipts`.
-   - Expected: receipt includes tool name (`terminal.run`) and exit code 0.
+   - Expected: receipt includes tool name (`terminal.run` or `filesystem.read`) and exit code 0 (directory reads return `is_dir: true` with entries).
 
 7) **Create/edit agent**
    - Go to `/agents`, click **Add**, fill name/description, save.
