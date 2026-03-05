@@ -30,11 +30,11 @@ curl -fsSL https://ollama.com/install.sh | sh
 ---
 
 ## 2) Backend Python environment (manual)
-Create or activate your Python 3.11 environment (conda/venv — managed by you). Then install backend dependencies:
+Create or activate your Python 3.11 environment (conda/venv — managed by you). Then install backend dependencies (use `python -m pip` to avoid zsh globbing and ensure the env’s pip is used):
 
 ```bash
 cd backend
-pip install -e .[dev]
+python -m pip install -e ".[dev]"
 ```
 
 ---
@@ -53,9 +53,11 @@ Health checks:
 ---
 
 ## Environment variables
-No required variables for milestone 1. Optional overrides (place in `backend/.env` or export in your shell):
+No required variables for milestone 2. Optional overrides (place in `backend/.env` or export in your shell):
 - `BRAIN_APP_NAME` — app title; default `brain`
 - `BRAIN_ENVIRONMENT` — runtime label; default `dev`
 - `BRAIN_OLLAMA_BASE_URL` — Ollama base URL; default `http://localhost:11434`
 - `BRAIN_CORS_ORIGINS` — comma-separated origins allowed for CORS; default `http://localhost:5173,http://127.0.0.1:5173`
 - `BRAIN_LOG_LEVEL` — logging level; default `INFO`
+- `BRAIN_STATE_DIR` — folder for local state (SQLite + artifacts); default `state` at repo root
+- `BRAIN_DB_FILE` — SQLite filename; default `brain.db`
