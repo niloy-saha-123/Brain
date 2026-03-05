@@ -2,12 +2,13 @@
 
 ## What changed
 - Added Pydantic models for task spec, agent spec, tool calls, receipts, approvals, SSE events.
-- Included JSON schema export utility (`python -m app.schemas.export`) that writes schemas to `backend/app/schemas/json/`.
+- Included JSON schema export utility (`python -m app.schemas.export`) and checked in generated schemas under `backend/app/schemas/json/`.
 - Exported schema components through `app.schemas.__all__` for reuse.
 - Kept previous milestones (backend skeleton, DB schema/repos) intact.
 
 ## Files touched
 - backend/app/schemas/*.py (task_spec, agent, tool_call, receipt, approval, events, __init__, export)
+- backend/app/schemas/json/*.json (exported schema artifacts)
 - README.md, PROGRESS.md, PR_NOTES.md (docs)
 
 ## How to verify
