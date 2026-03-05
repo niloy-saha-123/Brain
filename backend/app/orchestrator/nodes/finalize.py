@@ -1,3 +1,9 @@
-"""Placeholder for finalize.py; to be implemented in later milestone."""
+"""Finalize stub."""
+from __future__ import annotations
 
-# TODO: implement finalize.py
+from app.orchestrator.state import RunState
+
+
+def finalize(state: RunState) -> RunState:
+    state.add_worklog("Finalized response (stub).")
+    return state

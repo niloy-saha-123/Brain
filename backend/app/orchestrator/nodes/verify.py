@@ -1,3 +1,9 @@
-"""Placeholder for verify.py; to be implemented in later milestone."""
+"""Verify stub."""
+from __future__ import annotations
 
-# TODO: implement verify.py
+from app.orchestrator.state import RunState
+
+
+def verify(state: RunState) -> RunState:
+    state.add_worklog("Verified outputs (stub).")
+    return state

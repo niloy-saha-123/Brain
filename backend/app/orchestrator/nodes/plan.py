@@ -1,3 +1,9 @@
-"""Placeholder for plan.py; to be implemented in later milestone."""
+"""Planning stub."""
+from __future__ import annotations
 
-# TODO: implement plan.py
+from app.orchestrator.state import RunState
+
+
+def plan(state: RunState) -> RunState:
+    state.add_worklog("Planned execution (stub).")
+    return state

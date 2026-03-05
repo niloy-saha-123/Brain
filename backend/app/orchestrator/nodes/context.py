@@ -1,3 +1,9 @@
-"""Placeholder for context.py; to be implemented in later milestone."""
+"""Context retrieval stub."""
+from __future__ import annotations
 
-# TODO: implement context.py
+from app.orchestrator.state import RunState
+
+
+def load_context(state: RunState) -> RunState:
+    state.add_worklog("Loaded context (stub).")
+    return state

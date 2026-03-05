@@ -1,3 +1,9 @@
-"""Placeholder for route.py; to be implemented in later milestone."""
+"""Routing stub."""
+from __future__ import annotations
 
-# TODO: implement route.py
+from app.orchestrator.state import RunState
+
+
+def route(state: RunState) -> RunState:
+    state.add_worklog("Routed to default agent.")
+    return state
