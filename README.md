@@ -64,3 +64,4 @@ See `SETUP.md`.
 - Verified step 5: SSE event bus with /runs/{run_id}/events streaming endpoint is available.
 - Verified step 6: Tool system skeleton with approvals/receipts endpoints is available.
 - Verified step 7: Approval gating publishes requests/resolutions and is wired to events/runner.
+- Verified step 8: Orchestrator stubs (route→rewrite→context→plan→execute→verify→finalize) and run state are in place.

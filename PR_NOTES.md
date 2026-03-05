@@ -1,31 +1,28 @@
-# PR Notes — feat/approvals
+# PR Notes — feat/orchestrator
 
 ## What changed
-- Tool runner now creates approval requests (DB + SSE `approval_requested`) when sensitive tools are invoked without approval.
-- Approvals resolve endpoint publishes `approval_resolved` events; receipts publish events too.
-- Keeps prior tools/receipts functionality intact.
+- Added orchestrator stubs: RunState and node functions (route, rewrite, context, plan, execute, verify, finalize) plus graph starter that logs worklog/status events.
+- Runs are recorded in DB and immediately marked completed (stub) while emitting events.
 
 ## Files touched
-- backend/app/tools/runner.py
-- backend/app/api/approvals.py
+- backend/app/orchestrator/state.py
+- backend/app/orchestrator/graph.py
+- backend/app/orchestrator/nodes/*.py
 - README.md, PROGRESS.md, PR_NOTES.md
 
 ## How to verify
-1. Run backend: `cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`.
-2. Trigger a sensitive tool without approval (e.g., terminal.run) from a REPL:
+1. Start backend: `cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`.
+2. (Stub) call `start_run` from a REPL:
    ```python
-   from app.tools.runner import run_tool
+   from app.orchestrator.graph import start_run
+   from app.schemas import TaskSpec
    import asyncio
-   try:
-       asyncio.run(run_tool("terminal.run", {"cmd":"echo hi"}, {"run_id":"demo"}))
-   except Exception as e:
-       print(e)
+   ts = TaskSpec(id="run_orch", g="test", v=1)
+   asyncio.run(start_run(ts))
    ```
-   -> should raise approval required with approval_id.
-3. List approvals: `curl http://localhost:8000/approvals` (should show pending).
-4. Resolve: `curl -X POST http://localhost:8000/approvals/<id>/resolve -H 'Content-Type: application/json' -d '{"action":"approved"}'`
+3. Check run recorded: `sqlite3 ../state/brain.db "select run_id,status from runs where run_id='run_orch';"`
+4. Stream events: `curl -N http://localhost:8000/runs/run_orch/events` (should show status/worklog).
 
 ## Commands to run
 - `cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
-- `curl http://localhost:8000/approvals`
-- `curl -X POST http://localhost:8000/approvals/<id>/resolve -H 'Content-Type: application/json' -d '{"action":"approved"}'`
+- `curl -N http://localhost:8000/runs/run_orch/events`

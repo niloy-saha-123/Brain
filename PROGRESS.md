@@ -17,7 +17,7 @@
 | SSE event bus | feat/sse-events | Done | 57adec7 | GET /runs/{run_id}/events streams SSE (heartbeat + events) | Uses in-process EventBus; format follows event: <type>, data: JSON |
 | Tools + receipts | feat/tools-receipts | Done | c2d8362 | Tool base/registry/runner implemented; approvals + receipts endpoints exposed | Sensitive tools gated; receipts stored via repo_receipts |
 | Approvals inbox + gating | feat/approvals | Done | ba0083e | Tool runner creates approval requests and emits events; approvals resolve endpoint publishes resolution | Approval required for sensitive tools; SSE gets approval_requested/resolved events |
-| Orchestrator (LangGraph) | feat/orchestrator | Not started |  |  |  |
+| Orchestrator (LangGraph) | feat/orchestrator | Done | 5f94461 | Stub graph with route→rewrite→context→plan→execute→verify→finalize; run state persisted | Emits worklog/status events; completion immediate stub |
 | Memory + RAG (LanceDB) | feat/memory-rag | Not started |  |  |  |
 | UI scaffold | feat/ui-scaffold | Not started |  |  |  |
 | UI panels | feat/ui-panels | Not started |  |  |  |
