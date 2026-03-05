@@ -1,5 +1,5 @@
 ## 0) Release candidate
-- Branch/commit: `test/polish` @ `199e129` (latest; includes tests, doc updates, clean tree). This is the most complete branch and tagged as Done in `PROGRESS.md`.
+- Branch/commit: `test/polish` @ `79aa80b` (latest; includes tests, doc updates, final report). This is the most complete branch and tagged as Done in `PROGRESS.md`.
 - Package manager: npm is the documented and tested choice (see `SETUP.md` prereqs and `ui/README.md`). `ui/package-lock.json` is committed and current.
 
 ## 1) Repo map (high-level)
