@@ -40,12 +40,32 @@ class TerminalTool:
             proc.kill()
             raise
 
+        stdout_clean, out_trunc = _sanitize(stdout.decode())
+        stderr_clean, err_trunc = _sanitize(stderr.decode())
         return ToolResult(
             ok=proc.returncode == 0,
             request={"cmd": args.cmd, "cwd": args.cwd},
             result={
-                "stdout": stdout.decode(),
-                "stderr": stderr.decode(),
+                "stdout": stdout_clean,
+                "stderr": stderr_clean,
                 "exit_code": proc.returncode,
+                "truncated": out_trunc or err_trunc,
             },
         )
+
+
+def _sanitize(text: str, limit: int = 4000) -> tuple[str, bool]:
+    redacted = _redact(text)
+    if len(redacted) <= limit:
+        return redacted, False
+    return redacted[:limit], True
+
+
+def _redact(text: str) -> str:
+    # naive redaction for tokens/keys
+    keywords = ["apikey=", "api_key=", "token=", "secret=", "password="]
+    out = text
+    for kw in keywords:
+        if kw in out:
+            out = out.replace(kw, f"{kw}***")
+    return out

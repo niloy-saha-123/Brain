@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 from app.db import repo_approvals
 from app.core.time import now_iso
 from app.events.bus import event_bus
+from app.orchestrator.graph import resume_run_after_approval
 
 router = APIRouter()
 
@@ -34,4 +35,6 @@ async def resolve_approval(approval_id: str, decision: dict):
         "status": status,
     }
     await event_bus.publish(event)
+    # Attempt to resume any paused run
+    await resume_run_after_approval(approval_id, status)
     return {"status": "ok"}

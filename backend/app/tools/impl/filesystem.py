@@ -28,12 +28,13 @@ class FilesystemReadTool:
         return requires_approval(self.name, args.dict())
 
     async def execute(self, args: FSReadArgs, context: Dict[str, Any]) -> ToolResult:
-        path = Path(args.path).expanduser()
+        path = _safe_path(args.path)
         content = path.read_text(encoding="utf-8")
+        truncated, was_truncated = _truncate(content)
         return ToolResult(
             ok=True,
             request={"path": str(path)},
-            result={"content": content},
+            result={"content": truncated, "truncated": was_truncated},
         )
 
 
@@ -46,7 +47,7 @@ class FilesystemWriteTool:
         return requires_approval(self.name, args.dict())
 
     async def execute(self, args: FSWriteArgs, context: Dict[str, Any]) -> ToolResult:
-        path = Path(args.path).expanduser()
+        path = _safe_path(args.path)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(args.content, encoding="utf-8")
         return ToolResult(
@@ -54,3 +55,17 @@ class FilesystemWriteTool:
             request={"path": str(path)},
             result={"bytes_written": len(args.content)},
         )
+
+
+def _safe_path(path_str: str) -> Path:
+    base = Path.cwd().resolve()
+    path = Path(path_str).expanduser().resolve()
+    if not str(path).startswith(str(base)):
+        raise PermissionError("Path outside workspace is not allowed")
+    return path
+
+
+def _truncate(text: str, limit: int = 4000) -> tuple[str, bool]:
+    if len(text) <= limit:
+        return text, False
+    return text[:limit], True

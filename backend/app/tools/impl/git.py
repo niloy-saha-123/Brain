@@ -41,7 +41,7 @@ class GitStatusTool:
         return ToolResult(
             ok=proc.returncode == 0,
             request={"path": args.path},
-            result={"stdout": proc.stdout, "stderr": proc.stderr, "exit_code": proc.returncode},
+            result=_build_result(proc),
         )
 
 
@@ -61,7 +61,7 @@ class GitDiffTool:
         return ToolResult(
             ok=proc.returncode == 0,
             request={"path": args.path, "staged": args.staged},
-            result={"stdout": proc.stdout, "stderr": proc.stderr, "exit_code": proc.returncode},
+            result=_build_result(proc),
         )
 
 
@@ -74,9 +74,28 @@ class GitCommitTool:
         return requires_approval(self.name, args.dict())
 
     async def execute(self, args: GitCommitArgs, context: Dict[str, Any]) -> ToolResult:
-        proc = _run_git(["git", "commit", "-am", args.message], cwd=args.path)
+        proc = _run_git(["git", "commit", "-m", args.message], cwd=args.path)
         return ToolResult(
             ok=proc.returncode == 0,
             request={"path": args.path, "message": args.message},
-            result={"stdout": proc.stdout, "stderr": proc.stderr, "exit_code": proc.returncode},
+            result=_build_result(proc),
         )
+
+
+def _build_result(proc: subprocess.CompletedProcess) -> Dict[str, Any]:
+    stdout = proc.stdout or ""
+    stderr = proc.stderr or ""
+    stdout_clean, out_trunc = _truncate(stdout)
+    stderr_clean, err_trunc = _truncate(stderr)
+    return {
+        "stdout": stdout_clean,
+        "stderr": stderr_clean,
+        "exit_code": proc.returncode,
+        "truncated": out_trunc or err_trunc,
+    }
+
+
+def _truncate(text: str, limit: int = 4000) -> tuple[str, bool]:
+    if len(text) <= limit:
+        return text, False
+    return text[:limit], True

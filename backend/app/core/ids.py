@@ -1,3 +1,9 @@
-"""Placeholder for ids.py; to be implemented in later milestone."""
+"""ID helpers."""
+from __future__ import annotations
 
-# TODO: implement ids.py
+from datetime import datetime, timezone
+
+
+def make_run_id(prefix: str = "run") -> str:
+    ts = datetime.now(timezone.utc).isoformat()
+    return f"{prefix}_{ts}"

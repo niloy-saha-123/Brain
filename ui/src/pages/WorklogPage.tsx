@@ -1,22 +1,27 @@
-import React from 'react'
-
-const sample = [
-  { id: 'w1', msg: 'Run started', ts: 'now' },
-  { id: 'w2', msg: 'Planning stub', ts: 'now' },
-]
+import React, { useEffect, useState } from 'react'
+import { fetchRuns } from '../api/client'
 
 const WorklogPage: React.FC = () => {
+  const [runs, setRuns] = useState<any[]>([])
+
+  useEffect(() => {
+    fetchRuns().then(setRuns).catch(() => setRuns([]))
+  }, [])
+
   return (
     <div className="panel">
       <div className="panel-header">Work Log</div>
-      <div className="list">
-        {sample.map((item) => (
-          <div key={item.id} className="list-item">
-            <div className="label">{item.ts}</div>
-            <div>{item.msg}</div>
-          </div>
-        ))}
-      </div>
+      {runs.length === 0 && <div className="empty">No runs yet</div>}
+      {runs.length > 0 && (
+        <div className="list">
+          {runs.map((run) => (
+            <div key={run.run_id} className="list-item">
+              <div className="label">{run.created_at}</div>
+              <div><strong>{run.run_id}</strong> — {run.status}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { fetchRuns } from '../api/client'
 
 const RunsPage: React.FC = () => {
-  const rows = [
-    { id: 'run_orch', status: 'completed', agent: '-', started: 'now', duration: '0.1s', cost: '$0.00' },
-  ]
+  const [rows, setRows] = useState<any[]>([])
+
+  useEffect(() => {
+    fetchRuns().then(setRows).catch(() => setRows([]))
+  }, [])
+
   return (
     <div className="panel">
       <div className="panel-header">Runs</div>
@@ -20,15 +24,18 @@ const RunsPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
+          {rows.length === 0 && (
+            <tr><td colSpan={7}>No runs yet</td></tr>
+          )}
           {rows.map((r) => (
-            <tr key={r.id}>
+            <tr key={r.run_id}>
               <td>{r.status}</td>
-              <td>{r.id}</td>
-              <td>{r.agent}</td>
-              <td>{r.started}</td>
-              <td>{r.duration}</td>
-              <td>{r.cost}</td>
-              <td><button className="btn">Details</button></td>
+              <td>{r.run_id}</td>
+              <td>{r.active_agent_id || '-'}</td>
+              <td>{r.started_at || r.created_at}</td>
+              <td>{r.ended_at ? 'done' : '-'}</td>
+              <td>{r.cost_estimate_usd ?? 0}</td>
+              <td><a className="btn" href={`/receipts?run_id=${r.run_id}`}>Receipts</a></td>
             </tr>
           ))}
         </tbody>
