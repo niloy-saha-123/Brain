@@ -1,3 +1,9 @@
-"""Placeholder for rag.py; to be implemented in later milestone."""
+"""RAG placeholder (no embeddings yet)."""
+from __future__ import annotations
 
-# TODO: implement rag.py
+from typing import List, Dict
+
+
+def retrieve(query: str, k: int = 3) -> List[Dict]:
+    # Placeholder: return empty
+    return []

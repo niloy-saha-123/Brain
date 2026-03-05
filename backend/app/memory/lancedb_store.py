@@ -1,3 +1,6 @@
-"""Placeholder for lancedb_store.py; to be implemented in later milestone."""
+"""LanceDB placeholder for future embedding storage."""
 
-# TODO: implement lancedb_store.py
+# Placeholder functions; actual LanceDB integration is deferred.
+
+def connect():
+    raise NotImplementedError("LanceDB integration deferred for v0.1 stub.")

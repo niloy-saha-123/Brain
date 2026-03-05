@@ -1,3 +1,5 @@
-"""Placeholder for dedup.py; to be implemented in later milestone."""
+"""Dedup placeholder."""
 
-# TODO: implement dedup.py
+
+def dedup(items):
+    return items

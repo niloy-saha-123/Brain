@@ -1,3 +1,5 @@
-"""Placeholder for chunk.py; to be implemented in later milestone."""
+"""Chunking placeholder."""
 
-# TODO: implement chunk.py
+
+def chunk_text(text: str):
+    return []

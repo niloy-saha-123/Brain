@@ -1,3 +1,5 @@
-"""Placeholder for embed.py; to be implemented in later milestone."""
+"""Embedding placeholder."""
 
-# TODO: implement embed.py
+
+def embed_text(text: str):
+    raise NotImplementedError("Embedding not implemented in stub.")
