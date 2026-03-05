@@ -1,23 +1,30 @@
-# PR Notes — feat/sse-events
+# PR Notes — feat/tools-receipts
 
 ## What changed
-- Implemented in-process event bus and SSE streaming endpoint `/runs/{run_id}/events`.
-- Added heartbeat support and SSE formatting; wired router into FastAPI app.
-- Kept earlier milestones (health, DB, schemas, Ollama client) intact.
+- Implemented tool base/registry/policy/runner plus core tools (filesystem read/write, terminal run, git status/diff/commit, web.fetch GET, todo add/list/complete, ide.patch placeholder).
+- Added approvals endpoints (list/resolve) and receipts endpoints (list by run, get by id).
+- Tool runner stores receipts via repo_receipts; approvals remain conservative (approval required for sensitive tools).
 
 ## Files touched
-- backend/app/events/bus.py, backend/app/events/sse.py, backend/app/events/__init__.py
-- backend/app/main.py
-- README.md, PROGRESS.md, SETUP.md (docs if present)
+- backend/app/tools/**/* (base, policy, registry, runner, impl tools)
+- backend/app/api/approvals.py, backend/app/api/receipts.py, backend/app/main.py
+- README.md, PROGRESS.md, PR_NOTES.md
 
 ## How to verify
-1. Ensure backend deps installed and server running: `cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`.
-2. In another terminal, stream events (will hang until events are published):
-   ```bash
-   curl -N http://localhost:8000/runs/test-run/events
+1. `cd backend && python -m pip install -e ".[dev]"` (if not already).
+2. Start server: `uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`.
+3. Hit approvals/receipts endpoints (expect empty unless populated):
+   - `curl http://localhost:8000/approvals`
+   - `curl http://localhost:8000/runs/test-run/receipts`
+4. (Optional) Invoke tool runner from Python to see receipts stored:
+   ```python
+   from app.tools.runner import run_tool
+   import asyncio
+   asyncio.run(run_tool("todo.add", {"text":"test todo"}, {"run_id":"demo"}))
    ```
-   Should show `event: heartbeat` every ~15s; published events will appear as JSON lines.
 
 ## Commands to run
-- `cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
-- `curl -N http://localhost:8000/runs/test-run/events`
+- `cd backend && python -m pip install -e ".[dev]"`
+- `uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
+- `curl http://localhost:8000/approvals`
+- `curl http://localhost:8000/runs/demo/receipts`
