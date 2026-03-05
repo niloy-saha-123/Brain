@@ -3,7 +3,6 @@
 
 # 7) `PROGRESS.md`
 
-```markdown
 # Progress Tracker (Single Source of Truth)
 
 **Rule:** Every milestone branch must update this file before stopping.
