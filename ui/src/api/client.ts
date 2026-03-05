@@ -40,3 +40,35 @@ export async function fetchReceipts(runId: string) {
   if (!resp.ok) throw new Error('Failed to fetch receipts')
   return resp.json()
 }
+
+export async function fetchAgents() {
+  const resp = await fetch(`${API_BASE}/agents`)
+  if (!resp.ok) throw new Error('Failed to fetch agents')
+  return resp.json()
+}
+
+export async function createAgent(agent: any) {
+  const resp = await fetch(`${API_BASE}/agents`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(agent),
+  })
+  if (!resp.ok) throw new Error('Failed to create agent')
+  return resp.json()
+}
+
+export async function updateAgent(agentId: string, agent: any) {
+  const resp = await fetch(`${API_BASE}/agents/${agentId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(agent),
+  })
+  if (!resp.ok) throw new Error('Failed to update agent')
+  return resp.json()
+}
+
+export async function deleteAgent(agentId: string) {
+  const resp = await fetch(`${API_BASE}/agents/${agentId}`, { method: 'DELETE' })
+  if (!resp.ok) throw new Error('Failed to delete agent')
+  return true
+}

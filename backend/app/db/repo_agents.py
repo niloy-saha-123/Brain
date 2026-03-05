@@ -54,10 +54,31 @@ def upsert_agent(agent: Dict[str, Any], settings: Settings | None = None) -> Non
 def get_agent(agent_id: str, settings: Settings | None = None) -> Optional[Dict[str, Any]]:
     with get_connection(settings) as conn:
         row = conn.execute("SELECT * FROM agents WHERE agent_id = ?", (agent_id,)).fetchone()
-        return row_to_dict(row)
+        return _parse_agent_row(row)
 
 
 def list_agents(settings: Settings | None = None) -> List[Dict[str, Any]]:
     with get_connection(settings) as conn:
         rows = conn.execute("SELECT * FROM agents ORDER BY created_at ASC").fetchall()
-        return [row_to_dict(row) for row in rows if row is not None]
+        return [_parse_agent_row(row) for row in rows if row is not None]
+
+
+def delete_agent(agent_id: str, settings: Settings | None = None) -> None:
+    with get_connection(settings) as conn:
+        conn.execute("DELETE FROM agents WHERE agent_id = ?", (agent_id,))
+
+
+def _parse_agent_row(row: Any) -> Optional[Dict[str, Any]]:
+    data = row_to_dict(row)
+    if data is None:
+        return None
+    for field in ("tools_allow", "tools_deny", "memory_policy"):
+        val = data.get(field)
+        if val:
+            try:
+                data[field] = json.loads(val) if isinstance(val, str) else val
+            except json.JSONDecodeError:
+                data[field] = [] if "tools" in field else None
+        else:
+            data[field] = [] if "tools" in field else None
+    return data
