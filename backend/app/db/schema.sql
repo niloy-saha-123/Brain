@@ -1,0 +1,1 @@
+-- Placeholder schema file; will be defined in the database milestone.
