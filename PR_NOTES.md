@@ -17,6 +17,13 @@
    - Safer git commit (no global `-am`; allow message + explicit paths or read-only default).
 5) **Cost/completion polish**: keep cost tracking but ensure cloud calls remain approval-gated; update docs after fixes.
 
+### Progress on fix plan
+- (Done) Orchestrator executes todo.add with worklog/status events; pending approvals resume via `resume_run_after_approval`. `/runs` endpoint added to start/list runs.
+- (Done) Approvals auto-resume after resolve; pending map handles paused runs.
+- (Done) UI pages wired to live APIs/SSE for chat/worklog/approvals/runs/receipts.
+- (Done) Security: filesystem path normalization to workspace, SSRF guard, output truncation flags, safer git commit (no `-am`), terminal/web/git truncation/redaction basics.
+- (Pending) Artifact storage/redaction improvements and full tool coverage; richer plans/tool selection; cloud cost accuracy.
+
 ## Files touched (baseline tests & docs)
 - backend/app/tests/conftest.py
 - backend/app/tests/test_{approvals,health,policy,receipts,runs}.py
