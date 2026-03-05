@@ -22,7 +22,7 @@
 | UI scaffold | feat/ui-scaffold | Done | 4b6a74c | Vite/React app scaffolded with stub panels and base styling | package.json/vite config added; panels stubbed |
 | UI panels | feat/ui-panels | Done | e2205c1 | Monochrome boxy layout with sidebar/topbar, routed panels, status pills | Requires npm install after dependency update |
 | Cost meter hooks | feat/cost-meter | Done | 97fffcb | /costs/summary returns budget + model usage; Cost UI shows data; debug/llm records usage with run_id; cloud calls require approval flag when enabled | Cloud off by default; set BRAIN_CLOUD_ENABLED/BRAIN_CLOUD_BUDGET_USD to enable; npm install may update ui/package-lock |
-| Tests + polish | test/polish | Done | 622f788 | python -m pytest app/tests (uses temp DB, anyio asyncio backend); health endpoints respond | anyio_backend fixture pins asyncio; temp state dir per test |
+| Tests + polish | test/polish | Done | 622f788 | python -m pytest app/tests (uses temp DB, anyio asyncio backend); health endpoints respond | anyio_backend fixture pins asyncio; temp state dir per test; v0.1 fix plan in PR_NOTES (orchestrator/approvals/UI wiring/security hardening pending) |
 
 ## Current decisions (keep updated)
 - Runtime: Ollama
