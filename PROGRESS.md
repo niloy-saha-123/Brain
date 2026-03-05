@@ -14,7 +14,7 @@
 | SQLite schema + repos | feat/db-schema | Done | a570184 | App startup runs migrations; tables exist (agents, runs, messages, approvals, receipts, memory_facts, budgets, todos); repo CRUD helpers in db/repo_* | DB lives under state/brain.db by default; override with BRAIN_STATE_DIR/BRAIN_DB_FILE |
 | Schemas (Pydantic + JSON schema export) | feat/schemas | Done | 5700668 | Pydantic models validate; JSON schema export utility writes schema files when run; JSON schema artifacts checked in | Export via `python -m app.schemas.export` (writes to backend/app/schemas/json) |
 | Ollama client (streaming) | feat/ollama-client | Done | 2b337de | POST /debug/llm streams tokens from Ollama; model registry uses env-configured models | Defaults: general/router=llama3.2:3b, coder=deepseek-coder:6.7b; override via env |
-| SSE event bus | feat/sse-events | Not started |  |  |  |
+| SSE event bus | feat/sse-events | Done | 8853134 | GET /runs/{run_id}/events streams SSE (heartbeat + events) | Uses in-process EventBus; format follows event: <type>, data: JSON |
 | Tools + receipts | feat/tools-receipts | Not started |  |  |  |
 | Approvals inbox + gating | feat/approvals | Not started |  |  |  |
 | Orchestrator (LangGraph) | feat/orchestrator | Not started |  |  |  |
