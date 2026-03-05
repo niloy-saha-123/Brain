@@ -80,6 +80,25 @@ def update_run_costs(
         )
 
 
+def update_run_model_usage(
+    run_id: str,
+    model_usage: Any,
+    *,
+    cost_estimate_usd: Optional[float] = None,
+    settings: Settings | None = None,
+) -> None:
+    with get_connection(settings) as conn:
+        conn.execute(
+            """
+            UPDATE runs
+            SET model_usage = :model_usage,
+                cost_estimate_usd = COALESCE(:cost_estimate_usd, cost_estimate_usd)
+            WHERE run_id = :run_id;
+            """,
+            {"run_id": run_id, "model_usage": to_json(model_usage), "cost_estimate_usd": cost_estimate_usd},
+        )
+
+
 def get_run(run_id: str, settings: Settings | None = None) -> Optional[Dict[str, Any]]:
     with get_connection(settings) as conn:
         row = conn.execute("SELECT * FROM runs WHERE run_id = ?", (run_id,)).fetchone()

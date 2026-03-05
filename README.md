@@ -68,6 +68,7 @@ See `SETUP.md`.
 - Verified step 9: Memory/RAG placeholders added (facts store + RAG stubs).
 - Verified step 10: UI scaffold (Vite/React) with stub panels is set up.
 - Verified step 11: UI panels wired with monochrome boxy layout, routing, and status pills.
+- Verified step 12: Cost meter hooks with budget summary endpoint and UI panel wiring.
 
 ## UI spec (monochrome)
 - Layout: black sidebar (nav) + white main workspace; no shadows/rounded corners; borders 2px solid black.

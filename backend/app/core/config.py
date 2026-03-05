@@ -28,6 +28,9 @@ class Settings:
     coder_model: str = "deepseek-coder:6.7b"
     ollama_timeout: float = 30.0
     ollama_context_window: int = 4096
+    cloud_enabled: bool = False
+    cloud_budget_cap: float = 5.0
+    cloud_cost_per_1k_tokens: float = 0.0
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -49,6 +52,16 @@ class Settings:
         settings.ollama_timeout = float(os.getenv("BRAIN_OLLAMA_TIMEOUT", settings.ollama_timeout))
         settings.ollama_context_window = int(
             os.getenv("BRAIN_OLLAMA_CTX", settings.ollama_context_window)
+        )
+        settings.cloud_enabled = os.getenv("BRAIN_CLOUD_ENABLED", str(settings.cloud_enabled)).lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+        settings.cloud_budget_cap = float(os.getenv("BRAIN_CLOUD_BUDGET_USD", settings.cloud_budget_cap))
+        settings.cloud_cost_per_1k_tokens = float(
+            os.getenv("BRAIN_CLOUD_COST_PER_1K", settings.cloud_cost_per_1k_tokens)
         )
         return settings
 

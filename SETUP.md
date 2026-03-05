@@ -66,6 +66,9 @@ No required variables for milestone 4. Optional overrides (place in `backend/.en
 - `BRAIN_CODER_MODEL` — coder model; default `deepseek-coder:6.7b`
 - `BRAIN_OLLAMA_TIMEOUT` — request timeout seconds; default `30`
 - `BRAIN_OLLAMA_CTX` — max context window tokens; default `4096`
+- `BRAIN_CLOUD_ENABLED` — set to `true` to allow cloud model paths (default `false`, still approval-gated)
+- `BRAIN_CLOUD_BUDGET_USD` — monthly cloud spend cap; default `5`
+- `BRAIN_CLOUD_COST_PER_1K` — estimated cloud cost per 1k tokens; default `0.0` (set if you enable cloud)
 
 ---
 
