@@ -32,6 +32,7 @@ A minimal chat UI backed by a Brain/Router that:
 - feat/ui-panels
 - feat/cost-meter
 - test/polish
+- feat/v0.2-* (approved backlog branches for v0.2 milestones)
 
 ### Merge checklist (you do this manually)
 For each milestone branch:

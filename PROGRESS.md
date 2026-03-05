@@ -24,6 +24,14 @@
 | Cost meter hooks | feat/cost-meter | Done | 97fffcb | /costs/summary returns budget + model usage; Cost UI shows data; debug/llm records usage with run_id; cloud calls require approval flag when enabled | Cloud off by default; set BRAIN_CLOUD_ENABLED/BRAIN_CLOUD_BUDGET_USD to enable; npm install may update ui/package-lock |
 | Tests + polish | test/polish | Done | 1d582b8 | python -m pytest app/tests (uses temp DB, anyio asyncio backend); health endpoints respond; orchestrator executes todo.add with events and resumes after approvals; UI wired to APIs/SSE | anyio_backend fixture pins asyncio; temp state dir per test; security guards: path normalize, SSRF block, truncation, safer git commit; fix plan tracked in PR_NOTES |
 
+## v0.2 Milestones (backlog)
+| Milestone | Branch | Status | Last commit | Verification | Notes |
+|---|---|---|---|---|---|
+| Agents CRUD (backend + UI wiring) | feat/v0.2-agents | Not started |  |  | First priority |
+| Orchestrator planning + multi-tool execution | feat/v0.2-orchestrator | Not started |  |  | Real plan → tool selection → approvals → execution for >=3 tools |
+| Memory/RAG indexing + retrieval + citations | feat/v0.2-rag | Not started |  |  | Approved folder indexing, LanceDB, citations |
+| Security hardening (paths/SSRF/redaction/artifacts) | feat/v0.2-security | Not started |  |  | Filesystem allowlists per approval; SSRF guard; output truncation/artifacts |
+
 ## Current decisions (keep updated)
 - Runtime: Ollama
 - UI: React + Vite
