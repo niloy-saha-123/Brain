@@ -1,5 +1,5 @@
 ## 0) Release candidate
-- Branch/commit: `test/polish` @ `79aa80b` (latest; includes tests, doc updates, final report). This is the most complete branch and tagged as Done in `PROGRESS.md`.
+- Branch/commit: `test/polish` @ `8e49096` (latest; orchestrator/approvals/UI wiring/security guards + final report). This is the most complete branch and tagged as Done in `PROGRESS.md`.
 - Package manager: npm is the documented and tested choice (see `SETUP.md` prereqs and `ui/README.md`). `ui/package-lock.json` is committed and current.
 
 ## 1) Repo map (high-level)
@@ -29,40 +29,40 @@ Each item lists what/where/how/limitations.
 
 ### 2.1 UI features
 - **Chat UX (multi-run threads)**  
-  - What: Stub page with two-column layout ready for thread list + active chat (boxy rectangles).  
-  - Where: `ui/src/pages/ChatPage.tsx` (panels, composer), layout in `components/Layout.tsx`, styles in `styles.css`.  
-  - Verify: `npm run dev`, open `/chat`; see thread list stub left, conversation right with message boxes and composer.  
-  - Limitations: No real data wiring or send logic; worklog/receipts not injected.
+  - What: Two-column chat with run launcher; posts to `/runs`, subscribes to SSE for status/worklog/receipt events, shows receipts after completion.  
+  - Where: `ui/src/pages/ChatPage.tsx`, layout in `components/Layout.tsx`, styles in `styles.css`, SSE helper `api/sse.ts`.  
+  - Verify: `npm run dev`, open `/chat`, enter goal, see status/worklog updates and receipts rendered.  
+  - Limitations: Uses fixed todo.add plan; no assistant text streaming.
 - **Streaming output**  
-  - What: UI reserves header text “Streaming…” and uses SSE status pill; no live token stream.  
-  - Where: `ChatPage.tsx` header; `components/SSEStatus.tsx`.  
-  - Verify: Open `/chat`; observe “Streaming…” label and SSE pill.  
-  - Limitations: No actual SSE hookup to chat text.
+  - What: SSE-driven updates (status/worklog/receipts) with connection pill.  
+  - Where: `ChatPage.tsx`, `components/SSEStatus.tsx`, `api/sse.ts`.  
+  - Verify: Start a run; SSE events populate worklog; heartbeat handled.  
+  - Limitations: No token-by-token assistant text.
 - **Work Log stream**  
-  - What: Worklog panel stub with boxed list rows.  
+  - What: Lists runs from `/runs` with status/time.  
   - Where: `ui/src/pages/WorklogPage.tsx`.  
-  - Verify: `/worklog` shows empty-state boxed message.  
-  - Limitations: No event consumption; details drawer stub only.
+  - Verify: `/worklog` shows runs after starting one.  
+  - Limitations: Does not show per-event timeline.
 - **Agents panel**  
-  - What: Table of agents with status/actions; modal/drawer placeholders.  
+  - What: Static table shell.  
   - Where: `ui/src/pages/AgentsPage.tsx`.  
-  - Verify: `/agents` renders table rows with stub data and action buttons.  
-  - Limitations: No CRUD wiring to backend; prompts/permissions not persisted.
+  - Verify: `/agents` renders rows.  
+  - Limitations: No backend wiring or edit/create flow.
 - **Approvals inbox**  
-  - What: Two-column queue + detail pane with Approve/Reject buttons (UI only).  
+  - What: Fetches `/approvals`, displays queue, resolves via `/approvals/{id}/resolve`.  
   - Where: `ui/src/pages/ApprovalsPage.tsx`.  
-  - Verify: `/approvals` shows boxed list and detail panel with buttons.  
-  - Limitations: Not connected to `/approvals` API; counts static.
+  - Verify: Trigger approval (e.g., terminal.run), open `/approvals`, approve/deny and see refresh.  
+  - Limitations: Pending approvals only; no receipt view link.
 - **Runs panel + receipts viewer**  
-  - What: Runs table with detail drawer; receipts page with list + JSON viewer.  
+  - What: Runs table from `/runs`; receipts page loads receipts for selected run.  
   - Where: `ui/src/pages/RunsPage.tsx`, `ui/src/pages/ReceiptsPage.tsx`.  
-  - Verify: `/runs` and `/receipts` render tables and JSON block.  
-  - Limitations: Static data; no API wiring.
+  - Verify: `/runs` shows statuses; `/receipts` select run, see receipts JSON.  
+  - Limitations: Minimal metadata; no drawer animations.
 - **Cost meter**  
   - What: Cost summary tiles, model usage table, cloud status box fed by backend `/costs/summary`.  
   - Where: `ui/src/pages/CostPage.tsx`.  
   - Verify: Start backend, open `/cost`; tiles show budget 5/0 spend, model table updates after debug LLM call.  
-  - Limitations: Displays what backend reports; no charts; only budget/model summary.
+  - Limitations: Displays what backend reports; no charts.
 
 ### 2.2 Backend API endpoints
 - `GET /health` – returns `{status, service, ts}`. Handler: `app/api/health.py::health`. No request body.  
@@ -73,22 +73,25 @@ Each item lists what/where/how/limitations.
 - `GET /approvals` – list all approvals (pending & others). Handler: `app/api/approvals.py::list_approvals`.  
 - `POST /approvals/{id}/resolve` – body `{"action": "approved"|"denied"|"edited", "decision": ...}`; updates approval and publishes event. Handler: `approvals.py::resolve_approval`.  
 - `GET /runs/{run_id}/events` – SSE stream of events/heartbeat for run. Handler: `events/sse.py::sse_events`.  
+- `POST /runs` – start a run from goal; body `{"goal","run_id?"}`; returns run_id. Handler: `api/runs.py::create_run`.  
+- `GET /runs` – list runs. Handler: `api/runs.py::list_runs`.  
+- `GET /runs/{run_id}` – get single run. Handler: `api/runs.py::get_run`.  
 - `GET /costs/summary` – returns budget, spend, model usage list, cloud config. Handler: `app/api/costs.py::get_cost_summary`.  
-_(Other API stubs exist but not wired: `api/runs.py`, `api/chat.py`, etc.)_
+_(Other API stubs exist but not wired: `api/chat.py`, etc.)_
 
 ### 2.3 Orchestrator behavior
-- Nodes implemented: `start_run` simply marks run started/completed; no real route/rewrite/context/plan/execute logic.  
-  - Where: `app/orchestrator/graph.py`, state container in `orchestrator/state.py`.  
-  - Verify: call `start_run(TaskSpec(...))`; run persisted with status `completed` in SQLite (`runs` table).  
-  - Limitations: No pausing/resuming on approvals, no concurrency caps, no multi-node graph execution.
+- Nodes implemented: route/rewrite/context/plan/execute/verify/finalize add worklog entries; execute runs `todo.add` with goal text.  
+  - Where: `app/orchestrator/graph.py`, nodes under `orchestrator/nodes/*`, pending registry `orchestrator/pending.py`.  
+  - Verify: `POST /runs` with goal; stream `/runs/{id}/events` to see status/worklog/receipt events; receipt stored for todo.add.  
+  - Limitations: Single-step plan; no tool selection/agents; pending map in-memory only; no parallelism caps.
 
 ### 2.4 Tools
 - Registry and runner: `app/tools/registry.py` registers tools; `runner.py::run_tool` handles approval check, execution, receipt creation + events. Policy: `tools/policy.py` with `SENSITIVE_TOOLS` set.
-- **filesystem.read** – approval required; reads file text. Path: `tools/impl/filesystem.py::FilesystemReadTool`. Verify: call `run_tool("filesystem.read", {"path": ...}, ctx)` after approval; returns `content`. Limitations: no path allowlist/normalization beyond expanduser; no traversal guard.  
-- **filesystem.write** – approval required; writes text. `FilesystemWriteTool`. Verify similarly; returns bytes_written. Limitations: same safety gaps.  
-- **terminal.run** – approval required. `tools/impl/terminal.py::TerminalTool`. Executes command via asyncio subprocess, returns stdout/stderr/exit_code. Limitations: no cwd/path guard; approval gate only.  
-- **git.status / git.diff / git.commit** – approval required. `tools/impl/git.py::{GitStatusTool,GitDiffTool,GitCommitTool}`. Run git CLI; returns stdout/stderr/exit_code. Limitations: no repo validation, commit uses `git commit -am` (all tracked files).  
-- **web.fetch (GET only)** – approval required. `tools/impl/web.py::WebFetchTool`. Returns status_code, headers, text. Limitations: no SSRF/hostname allowlist, no size cap.  
+- **filesystem.read** – approval required; reads file text. Path: `tools/impl/filesystem.py::FilesystemReadTool`. Verify: call `run_tool("filesystem.read", {"path": ...}, ctx)` after approval; returns content + truncated flag. Limitations: allowlist is current `cwd` only; not per-approval.  
+- **filesystem.write** – approval required; writes text. `FilesystemWriteTool`. Verify similarly; returns bytes_written. Limitations: same allowlist constraint.  
+- **terminal.run** – approval required. `tools/impl/terminal.py::TerminalTool`. Executes command via asyncio subprocess, returns stdout/stderr/exit_code (truncated/redacted). Limitations: no command allowlist/sandbox.  
+- **git.status / git.diff / git.commit** – approval required. `tools/impl/git.py::{GitStatusTool,GitDiffTool,GitCommitTool}`. Run git CLI; returns stdout/stderr/exit_code (truncated). Limitations: no repo validation; commit uses `git commit -m` with staged changes only.  
+- **web.fetch (GET only)** – approval required. `tools/impl/web.py::WebFetchTool`. Returns status_code, headers, text (truncated). Limitations: blocks localhost/metadata but lacks full SSRF/size controls.  
 - **todo.add/list/complete** – no approval. `tools/impl/todo.py`. In-memory store; returns todo objects. Limitations: non-persistent.  
 - **ide.patch** – approval required. `tools/impl/ide_patch.py` (creates patch text artifact). Verify via run_tool; returns patch string. Limitations: does not apply patch automatically.  
 - Receipt fields: every tool returns `ToolResult` with request/result/diff (diff mostly None). Runner writes `receipts` table (see `db/repo_receipts.py`) with `ok`, timestamps, tool name.
@@ -96,15 +99,15 @@ _(Other API stubs exist but not wired: `api/runs.py`, `api/chat.py`, etc.)_
 ### 2.5 Approvals system
 - Types: whatever tool name requested; typically terminal/filesystem/git/web/cloud.  
 - Creation: `run_tool` calls `_create_approval` when `policy.requires_approval` true and no `approval_id` in context; stored via `db/repo_approvals.py`.  
-- Resolution: `POST /approvals/{id}/resolve` sets status/decision and publishes `approval_resolved` event (see `api/approvals.py`).  
-- Resume behavior: orchestrator does not currently resume runs; runner simply raises `ToolError` with approval_id.  
-- UI: Approvals inbox page stub (`ui/src/pages/ApprovalsPage.tsx`) shows list/detail/actions but not wired to API.
+- Resolution: `POST /approvals/{id}/resolve` sets status/decision, publishes `approval_resolved`, and calls `resume_run_after_approval` to continue paused runs.  
+- Resume behavior: in-memory pending map (`orchestrator/pending.py`); resumed tool executes with approval_id and run completes.  
+- UI: `/approvals` page fetches and resolves approvals.
 
 ### 2.6 Receipts system
 - Schema: `app/schemas/receipt.py`; DB table `receipts` in `db/schema.sql`; repos in `db/repo_receipts.py`. Stored fields: receipt_id, run_id, tool, ok, ts, request JSON, result JSON, diff.  
 - Storage: `runner._store_receipt` inserts into SQLite, auto-creates run if missing. Optional JSONL artifact path not implemented.  
-- Truncation: not implemented; full stdout/text stored.  
-- Enforcement: No explicit “claim must cite receipt” logic; verify node is stubbed, so enforcement not active (limitation).
+- Truncation/redaction: stdout/stderr/web/git outputs truncated to 4000 chars with `truncated` flag; basic redaction for obvious tokens in terminal.  
+- Enforcement: No explicit “claim must cite receipt” logic; verify node stubbed; still a limitation.
 
 ### 2.7 Memory + RAG
 - Facts/preferences: `memory/facts.py` with `save_fact`, `list_facts`; table `memory_facts` in SQLite. Verify via Python REPL saving a fact and querying table.  
@@ -125,12 +128,12 @@ _(Other API stubs exist but not wired: `api/runs.py`, `api/chat.py`, etc.)_
 | SQLite tables (agents, runs, messages, approvals, receipts, memory_facts, budgets, todos) | Yes | `db/schema.sql`, `db/migrate.py` | LanceDB not used |
 | Pydantic schemas (TaskSpec, AgentSpec, ToolCall, Receipt, Approval) + JSON export | Yes | `schemas/*.py`, `schemas/export.py` | Export utility present |
 | Ollama streaming client + `/debug/llm` | Yes | `llm/ollama.py`, `api/llm.py` | No router selection logic beyond defaults |
-| SSE event bus `/runs/{id}/events` | Yes | `events/bus.py`, `events/sse.py` | Heartbeat only; no run events emitted in practice |
-| Tools + receipts with approval gating | Partial | `tools/*`, `runner.py`, `policy.py` | Approval created but run resume not wired; safety gaps (path/SSRF) |
-| Approvals inbox endpoints | Yes | `api/approvals.py` | UI not wired |
-| Orchestrator graph route→finalize | Partial | `orchestrator/graph.py` stub completes immediately | No real planning/execution/resume |
+| SSE event bus `/runs/{id}/events` | Yes | `events/bus.py`, `events/sse.py` | Publishes status/worklog/receipt/approval + heartbeat |
+| Tools + receipts with approval gating | Partial | `tools/*`, `runner.py`, `policy.py` | Approval gating + resume; safety gaps remain (allowlist, redaction depth) |
+| Approvals inbox endpoints | Yes | `api/approvals.py` | UI wired to pending approvals |
+| Orchestrator graph route→finalize | Partial | `orchestrator/graph.py`, `nodes/*` | Executes todo.add only; single-step |
 | Memory + RAG placeholders | Partial | `memory/*` | No real indexing/retrieval |
-| UI scaffold/panels monochrome | Yes | `ui/src/pages/*`, `styles.css` | Data static |
+| UI scaffold/panels monochrome | Yes | `ui/src/pages/*`, `styles.css` | Agents panel still static |
 | Cost meter hooks | Yes | `core/costs.py`, `api/costs.py`, `ui/src/pages/CostPage.tsx` | Costs heuristic only |
 | Tests for approvals/receipts/runs/health/policy | Yes | `app/tests/*` | Integration/UI tests missing |
 
@@ -146,12 +149,12 @@ _(Other API stubs exist but not wired: `api/runs.py`, `api/chat.py`, etc.)_
 - Missing: end-to-end API/UI integration, SSE streaming content, filesystem/web/git tool execution tests, memory/RAG tests.
 
 ## 5) Security + safety review
-- Path traversal protections: **Not implemented**. Filesystem tools use raw paths (expanduser only). TODO: normalize/resolve against approved roots and enforce allowlist.  
-- Shell injection: Minimal; `terminal.run` uses `shlex.split` and subprocess exec; still executes arbitrary commands once approved. TODO: strict allowlist or sandbox.  
-- SSRF protections: **Missing**. `web.fetch` allows arbitrary URLs (including localhost/file/metadata). TODO: deny localhost/169.254/::1/file schemes, add size/time limits.  
-- Secrets redaction: Not implemented; receipts store full stdout/stderr/headers. TODO: redaction filters + truncation.  
-- Approval bypass risks: Approval required for sensitive tools via `policy.py`, but orchestrator does not pause/resume; caller must supply approval_id manually. TODO: enforce run-state gating and block execution without resolved approval.  
-- Git safety: `git.commit` commits all tracked changes (`-am`), no path restriction.  
+- Path traversal protections: **Partial.** Filesystem tools resolve paths and enforce staying under `cwd`; no configurable allowlist or per-approval scope yet.  
+- Shell injection: `terminal.run` still executes arbitrary commands post-approval; uses `shlex.split`. Sandbox/allowlist still TODO.  
+- SSRF protections: **Partial.** `web.fetch` blocks localhost/0.0.0.0/169.254 and non-http(s); truncates to 4000 chars. Needs content-type/size limits and broader CIDR denylist.  
+- Secrets redaction: Basic token/key redaction + truncation for terminal/web/git outputs; headers not redacted; no artifact offloading.  
+- Approval bypass risks: Runner creates approvals; orchestrator pauses and resumes via pending map. Pending state is in-memory (lost on restart); persistence needed.  
+- Git safety: Commit uses `git commit -m` (no `-am`), outputs truncated; still lacks repo/path validation.  
 - Cloud safety: Cloud disabled by default; cloud calls require `use_cloud`+`approval_id` on debug endpoint. No other cloud paths.
 
 ## 6) Manual verification checklist
@@ -168,28 +171,30 @@ _(Other API stubs exist but not wired: `api/runs.py`, `api/chat.py`, etc.)_
 5) **LLM call + cost update**  
    - `curl -N -X POST http://localhost:8000/debug/llm -H "Content-Type: application/json" -d '{"prompt":"hi","run_id":"run_cost"}'`  
    - `curl http://localhost:8000/costs/summary` → models list includes llama3.2:3b with tokens ~8  
-6) **Approval flow**  
+6) **Run orchestration via REST**  
+   - `curl -X POST http://localhost:8000/runs -H "Content-Type: application/json" -d '{"goal":"demo task"}'` → run_id  
+   - `curl -N http://localhost:8000/runs/<run_id>/events` → worklog/status and receipt events  
+7) **Approval flow**  
    - `python - <<'PY'\nimport asyncio\nfrom app.tools.runner import run_tool\ntry:\n    asyncio.run(run_tool(\"terminal.run\", {\"cmd\":\"echo hi\"}, {\"run_id\":\"demo\"}))\nexcept Exception as e:\n    print(e)\nPY`  
    - `curl http://localhost:8000/approvals` → pending approval for terminal.run  
-7) **Resolve approval** (choose approval_id from previous step)  
+8) **Resolve approval** (choose approval_id from previous step)  
    - `curl -X POST "http://localhost:8000/approvals/<approval_id>/resolve" -H 'Content-Type: application/json' -d '{"action":"approved"}'` → {"status":"ok"}  
-8) **Receipt check**  
+9) **Receipt check**  
    - `python - <<'PY'\nimport asyncio\nfrom app.tools.runner import run_tool\nasyncio.run(run_tool(\"todo.add\", {\"text\":\"test\"}, {\"run_id\":\"demo\"}))\nPY`  
    - `curl http://localhost:8000/runs/demo/receipts` → list contains todo.add receipt ok=1  
-9) **SSE heartbeat**  
-   - `curl -N http://localhost:8000/runs/test-run/events` → heartbeat events (stub)  
-10) **Tests**  
+10) **SSE heartbeat**  
+    - `curl -N http://localhost:8000/runs/test-run/events` → heartbeat/worklog/status events  
+11) **Tests**  
     - `python -m pytest app/tests` → 7 passed  
-11) **UI**  
+12) **UI**  
     - `cd ui && npm install && npm run dev`  
-    - Open `http://localhost:5173` and click through Chat, Worklog, Agents, Approvals, Runs, Receipts, Cost; Cost panel shows summary values.
+    - Open `http://localhost:5173`, start a run in Chat, see Worklog/Runs/Receipts/Approvals reflect live data; Cost shows summary values.
 
 ## 7) What’s not done (v0.2 backlog)
-- Full orchestrator graph (real route/rewrite/context/plan/execute/verify/finalize with tool calls and approvals resume).  
-- Real chat/runs/agents/approvals UI wiring and data fetching.  
-- Memory/RAG indexing, embeddings, retrieval, and citation display.  
-- Robust safety: path normalization, SSRF blocking, output truncation/redaction, tighter git/terminal controls.  
+- Rich orchestrator planning/tool selection/agent routing; persist pending state across restarts; parallelism controls.  
+- Agents panel CRUD and backend agent store; chat assistant text streaming.  
+- Memory/RAG: indexing + embeddings + retrieval with citations; rolling summaries.  
+- Security hardening: configurable workspace allowlists, sandbox/allowlist for terminal/git, full SSRF controls, artifact storage/redaction for outputs.  
 - Cloud model integration and accurate cost tracking.  
-- Worklog streaming of real events/tokens; richer SSE handling.  
-- Rolling summaries and persisted todo store.  
-- Integration tests and UI e2e tests.  
+- Worklog timeline UI and more detailed SSE/token streaming.  
+- Persisted todo store; broader tool tests and UI e2e/integration tests.  
