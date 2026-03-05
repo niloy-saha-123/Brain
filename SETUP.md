@@ -53,7 +53,7 @@ Health checks:
 ---
 
 ## Environment variables
-No required variables for milestone 2. Optional overrides (place in `backend/.env` or export in your shell):
+No required variables for milestone 4. Optional overrides (place in `backend/.env` or export in your shell):
 - `BRAIN_APP_NAME` — app title; default `brain`
 - `BRAIN_ENVIRONMENT` — runtime label; default `dev`
 - `BRAIN_OLLAMA_BASE_URL` — Ollama base URL; default `http://localhost:11434`
@@ -61,3 +61,17 @@ No required variables for milestone 2. Optional overrides (place in `backend/.en
 - `BRAIN_LOG_LEVEL` — logging level; default `INFO`
 - `BRAIN_STATE_DIR` — folder for local state (SQLite + artifacts); default `state` at repo root
 - `BRAIN_DB_FILE` — SQLite filename; default `brain.db`
+- `BRAIN_ROUTER_MODEL` — model for routing; default `llama3.2:3b`
+- `BRAIN_GENERAL_MODEL` — model for general assistant; default `llama3.2:3b`
+- `BRAIN_CODER_MODEL` — coder model; default `deepseek-coder:6.7b`
+- `BRAIN_OLLAMA_TIMEOUT` — request timeout seconds; default `30`
+- `BRAIN_OLLAMA_CTX` — max context window tokens; default `4096`
+
+---
+
+## Debug LLM endpoint
+- Run backend, then POST/stream to `http://localhost:8000/debug/llm` with JSON body:
+  ```json
+  { "prompt": "Hello", "model": "deepseek-coder:6.7b", "stream": true }
+  ```
+  Response streams plain text tokens.

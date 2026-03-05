@@ -60,3 +60,4 @@ See `SETUP.md`.
 - Verified step 1: backend skeleton with health endpoints and CORS is in place.
 - Verified step 2: SQLite schema, migrations, and DB repos are implemented.
 - Verified step 3: Pydantic schemas added with JSON schema export utility.
+- Verified step 4: Ollama client with streaming and /debug/llm endpoint is available.
