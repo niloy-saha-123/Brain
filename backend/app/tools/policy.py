@@ -12,6 +12,7 @@ SENSITIVE_TOOLS = {
     "git.commit",
     "web.fetch",
     "ide.patch",
+    "rag.index",
 }
 
 

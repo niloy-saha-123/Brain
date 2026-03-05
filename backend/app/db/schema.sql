@@ -90,3 +90,20 @@ CREATE TABLE IF NOT EXISTS todos (
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS rag_allowlist (
+    path TEXT PRIMARY KEY,
+    approval_id TEXT NOT NULL,
+    approved_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS rag_chunks (
+    chunk_id TEXT PRIMARY KEY,
+    path TEXT NOT NULL,
+    chunk_index INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    embedding TEXT,
+    hash TEXT,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_rag_chunks_path ON rag_chunks (path);

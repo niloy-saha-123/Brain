@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { postRun, fetchReceipts } from '../api/client'
+import { postRun, fetchReceipts, searchRag, indexRag, fetchFacts } from '../api/client'
 import { subscribeToRun, RunEvent } from '../api/sse'
 
 type Message = { role: string; text: string }
@@ -11,12 +11,20 @@ const ChatPage: React.FC = () => {
   const [worklog, setWorklog] = useState<string[]>([])
   const [messages, setMessages] = useState<Message[]>([])
   const [receipts, setReceipts] = useState<any[]>([])
+  const [ragHits, setRagHits] = useState<any[]>([])
+  const [facts, setFacts] = useState<any[]>([])
+  const [indexPath, setIndexPath] = useState('')
+  const [indexStatus, setIndexStatus] = useState<string | null>(null)
 
   useEffect(() => {
     if (!runId) return
     const stop = subscribeToRun(runId, handleEvent)
     return () => stop()
   }, [runId])
+
+  useEffect(() => {
+    fetchFacts().then(setFacts).catch(() => setFacts([]))
+  }, [])
 
   async function handleSubmit() {
     if (!goal.trim()) return
@@ -27,6 +35,7 @@ const ChatPage: React.FC = () => {
     setMessages([{ role: 'user', text: goal.trim() }])
     setReceipts([])
     setGoal('')
+    searchRag(goal.trim()).then((res) => setRagHits(res.hits || [])).catch(() => setRagHits([]))
   }
 
   function handleEvent(ev: RunEvent) {
@@ -45,6 +54,21 @@ const ChatPage: React.FC = () => {
     if (ev.type === 'approval_requested') {
       setWorklog((w) => [...w, `Approval requested: ${ev.approval_id}`])
       setStatus('awaiting_approval')
+    }
+  }
+
+  async function handleIndex() {
+    if (!indexPath.trim()) return
+    setIndexStatus('pending')
+    try {
+      const res = await indexRag(indexPath.trim())
+      if (res.status === 'pending') {
+        setIndexStatus(`pending approval ${res.approval_id}`)
+      } else {
+        setIndexStatus(`indexed ${res.chunks_indexed} chunks`)
+      }
+    } catch {
+      setIndexStatus('failed')
     }
   }
 
@@ -100,6 +124,42 @@ const ChatPage: React.FC = () => {
             ))}
           </div>
         )}
+        <div className="panel" style={{ marginTop: 12 }}>
+          <div className="panel-header">Context</div>
+          {ragHits.length === 0 && <div className="empty">No RAG hits</div>}
+          {ragHits.length > 0 && (
+            <div className="list">
+              {ragHits.map((hit, idx) => (
+                <div key={idx} className="list-item">
+                  <div className="label">{hit.citation}</div>
+                  <div>{hit.content}</div>
+                  <div>Score: {hit.score?.toFixed(2)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {facts.length > 0 && (
+            <div className="panel" style={{ marginTop: 8 }}>
+              <div className="panel-header">Facts</div>
+              <div className="list">
+                {facts.map((f: any) => (
+                  <div key={f.mem_id} className="list-item">
+                    <div className="label">{f.key}</div>
+                    <div>{String(f.value)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="panel" style={{ marginTop: 12 }}>
+          <div className="panel-header">Index folder</div>
+          <input className="input" placeholder="/path/to/folder" value={indexPath} onChange={(e) => setIndexPath(e.target.value)} />
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <button className="btn primary" onClick={handleIndex}>Index</button>
+            {indexStatus && <span className="label">{indexStatus}</span>}
+          </div>
+        </div>
       </div>
     </div>
   )

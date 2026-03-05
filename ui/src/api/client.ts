@@ -72,3 +72,25 @@ export async function deleteAgent(agentId: string) {
   if (!resp.ok) throw new Error('Failed to delete agent')
   return true
 }
+
+export async function indexRag(path: string, runId?: string) {
+  const resp = await fetch(`${API_BASE}/rag/index`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path, run_id: runId }),
+  })
+  if (!resp.ok) throw new Error('Failed to index path')
+  return resp.json()
+}
+
+export async function searchRag(query: string, k = 3) {
+  const resp = await fetch(`${API_BASE}/rag/search?query=${encodeURIComponent(query)}&k=${k}`)
+  if (!resp.ok) throw new Error('Failed to search RAG')
+  return resp.json()
+}
+
+export async function fetchFacts() {
+  const resp = await fetch(`${API_BASE}/memory/facts`)
+  if (!resp.ok) throw new Error('Failed to fetch facts')
+  return resp.json()
+}

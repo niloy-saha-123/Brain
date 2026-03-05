@@ -5,5 +5,9 @@ from app.orchestrator.state import RunState
 
 
 def finalize(state: RunState) -> RunState:
-    state.add_worklog("Finalized response (stub).")
+    if state.context_rag:
+        citations = ", ".join(hit["citation"] for hit in state.context_rag)
+        if state.output:
+            state.output += f"\nCitations: {citations}"
+    state.add_worklog("Finalized response with citations.")
     return state

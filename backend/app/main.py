@@ -4,7 +4,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import health, llm, receipts, approvals, costs, runs, agents
+from app.api import health, llm, receipts, approvals, costs, runs, agents, memory
 from app.events import sse as sse_events
 from app.core.config import get_settings, setup_logging
 from app.db.migrate import ensure_db_ready
@@ -35,6 +35,7 @@ def create_app() -> FastAPI:
     app.include_router(runs.router)
     app.include_router(agents.router)
     app.include_router(costs.router)
+    app.include_router(memory.router)
     app.include_router(sse_events.router)
 
     return app

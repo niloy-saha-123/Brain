@@ -18,6 +18,8 @@ class RunState:
     output: Optional[str] = None
     plan: List[Dict[str, Any]] = field(default_factory=list)
     current_step: int = 0
+    context_facts: List[Dict[str, Any]] = field(default_factory=list)
+    context_rag: List[Dict[str, Any]] = field(default_factory=list)
 
     def add_worklog(self, msg: str) -> None:
         self.worklog.append(msg)

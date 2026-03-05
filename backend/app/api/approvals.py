@@ -3,10 +3,12 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from app.db import repo_approvals
+from app.db import repo_approvals, repo_runs
 from app.core.time import now_iso
 from app.events.bus import event_bus
 from app.orchestrator.graph import resume_run_after_approval
+from app.tools.runner import run_tool
+from app.tools.base import ToolError
 
 router = APIRouter()
 
@@ -37,4 +39,18 @@ async def resolve_approval(approval_id: str, decision: dict):
     await event_bus.publish(event)
     # Attempt to resume any paused run
     await resume_run_after_approval(approval_id, status)
+
+    # Auto-handle RAG indexing approvals
+    if approval.get("type") == "rag.index" and status == "approved":
+        req = approval.get("request") or {}
+        details = req.get("details") or {}
+        path = details.get("path")
+        run_id = approval.get("run_id")
+        if path and run_id:
+            try:
+                repo_runs.update_run_status(run_id, "running")
+                await run_tool("rag.index", {"path": path}, {"run_id": run_id, "approval_id": approval_id})
+                repo_runs.update_run_status(run_id, "completed", ended_at=now_iso())
+            except ToolError:
+                pass
     return {"status": "ok"}

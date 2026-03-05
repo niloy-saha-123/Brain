@@ -4,6 +4,7 @@ from app.tools.impl.git import GitStatusTool, GitDiffTool, GitCommitTool
 from app.tools.impl.web import WebFetchTool
 from app.tools.impl.todo import TodoAddTool, TodoListTool, TodoCompleteTool
 from app.tools.impl.ide_patch import IDEPatchTool
+from app.tools.impl.rag_index import RagIndexTool
 
 
 def register_all_tools(registry) -> None:
@@ -19,6 +20,7 @@ def register_all_tools(registry) -> None:
     registry.register(TodoListTool())
     registry.register(TodoCompleteTool())
     registry.register(IDEPatchTool())
+    registry.register(RagIndexTool())
 
 
 __all__ = [
@@ -33,5 +35,6 @@ __all__ = [
     "TodoListTool",
     "TodoCompleteTool",
     "IDEPatchTool",
+    "RagIndexTool",
     "register_all_tools",
 ]
