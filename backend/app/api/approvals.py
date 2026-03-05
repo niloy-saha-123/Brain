@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.db import repo_approvals
 from app.core.time import now_iso
+from app.events.bus import event_bus
 
 router = APIRouter()
 
@@ -26,4 +27,14 @@ def resolve_approval(approval_id: str, decision: dict):
         status=status,
         resolved_at=now_iso(),
     )
+    event = {
+        "type": "approval_resolved",
+        "approval_id": approval_id,
+        "run_id": approval.get("run_id"),
+        "status": status,
+    }
+    # fire-and-forget
+    import asyncio
+
+    asyncio.create_task(event_bus.publish(event))
     return {"status": "ok"}
