@@ -17,8 +17,10 @@ async def run_tool(tool_name: str, args: Dict[str, Any], context: Dict[str, Any]
     args_obj = tool.args_model(**args)
 
     if requires_approval(tool_name, args):
-        approval_id = await _create_approval(tool_name, args_obj, context)
-        raise ToolError(f"Approval required before executing tool. approval_id={approval_id}")
+        existing_approval = context.get("approval_id")
+        if not existing_approval:
+            approval_id = await _create_approval(tool_name, args_obj, context)
+            raise ToolError(f"Approval required before executing tool. approval_id={approval_id}")
 
     result = await tool.execute(args_obj, context)
     receipt_id = context.get("receipt_id", f"r_{now_iso()}")
