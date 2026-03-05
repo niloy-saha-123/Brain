@@ -28,7 +28,7 @@
 | Milestone | Branch | Status | Last commit | Verification | Notes |
 |---|---|---|---|---|---|
 | Agents CRUD (backend + UI wiring) | feat/v0.2-agents | Done | db91211 | python -m pytest app/tests; UI Agents page can create/update/delete agents via API | Branch work tracked on feat/v0.2-backlog; agent_id auto if blank |
-| Orchestrator planning + multi-tool execution | feat/v0.2-orchestrator | Not started |  |  | Real plan → tool selection → approvals → execution for >=3 tools |
+| Orchestrator planning + multi-tool execution | feat/v0.2-orchestrator | Done | a9e49e2 | python -m pytest app/tests; start run with goal 'terminal' pauses for approval; resolve approval then resume_run_after_approval completes remaining steps | Plan builds tool list (todo/web/filesystem/terminal); step index tracking resumes after approvals; supports multiple approvals |
 | Memory/RAG indexing + retrieval + citations | feat/v0.2-rag | Not started |  |  | Approved folder indexing, LanceDB, citations |
 | Security hardening (paths/SSRF/redaction/artifacts) | feat/v0.2-security | Not started |  |  | Filesystem allowlists per approval; SSRF guard; output truncation/artifacts |
 
