@@ -69,6 +69,7 @@ See `SETUP.md`.
 - Verified step 10: UI scaffold (Vite/React) with stub panels is set up.
 - Verified step 11: UI panels wired with monochrome boxy layout, routing, and status pills.
 - Verified step 12: Cost meter hooks with budget summary endpoint and UI panel wiring.
+- Verified step 13: Tests cover approvals/receipts/health/runs; anyio backend pinned to asyncio for local pytest.
 
 ## UI spec (monochrome)
 - Layout: black sidebar (nav) + white main workspace; no shadows/rounded corners; borders 2px solid black.
